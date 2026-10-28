@@ -15,7 +15,7 @@ Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and re
 
 
 ## Stack
-- Expo (dev builds, not Expo Go), Expo Router, TypeScript strict, NativeWind, Reanimated
+- Expo (dev builds from Phase 6 on; Expo Go until then — see Current constraints), Expo Router, TypeScript strict, NativeWind, Reanimated
 - TanStack Query (server state), Zustand (UI state only), react-hook-form + zod, date-fns-tz
 - Supabase: Postgres + RLS, Auth (email OTP, @ucsd.edu only), Realtime, Storage, Edge Functions (Deno), pg_cron
 - Push: expo-notifications → Expo Push API from the `push` Edge Function
@@ -26,6 +26,7 @@ Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and re
 - `npm run db:start` (supabase start) · `npm run db:reset` (reapply migrations + seed) · `npm run db:test` (pgTAP)
 - `npm run db:types` — regenerate `src/lib/database.types.ts` after ANY migration
 - `npm run tokens` — regenerate `src/theme/tokens.ts` + `global.css` from tokens.json
+- Only `start`/`android`/`ios`/`web`/`lint` exist in `package.json` today; the rest above get added as Supabase, tests, and the token pipeline land (see `docs/spec/09-roadmap.md`) — don't assume they run before then.
 
 ## Architecture rules
 - `src/app/` is routes only: compose feature components, read params, nothing else. Keep files short.
