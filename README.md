@@ -1,56 +1,30 @@
-# Welcome to your Expo app 👋
+# FlyTag spec — index
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> Status: v1.1 · Owner: Niharika · Last updated: 2026-10-27
+> Visual source of truth: the FlyTag Brand System artifact. The Canva PDF is the flow wireframe only.
 
-## Get started
+The spec is split so Claude Code (and you) read only what a task needs. Section numbers (§) are global, so "§7.3" always means the same thing. **[DECIDE]** marks open product questions (§15); **[VERIFY]** marks version or policy details to confirm at setup.
 
-1. Install dependencies
+## Files
 
-   ```bash
-   npm install
-   ```
+| File | Sections | Read it when… |
+|---|---|---|
+| `01-product.md` | §1 scope + screens, §16 glossary | starting a new screen or unsure what's in v1 |
+| `02-stack-decisions.md` | §2 stack, §3 architecture | adding a library or questioning a choice (rarely needed for coding) |
+| `03-structure.md` | §4 folders, file roles, imports, naming | creating any new file |
+| `04-design-system.md` | §5 tokens, brand rules, porting | touching `src/ui/`, `src/theme/`, or styling |
+| `05-database.md` | §6 tables, §7 RLS, RPCs, triggers, notifications | writing a migration, RPC, policy, Edge Function |
+| `06-client-data.md` | §8 Supabase client, hooks, realtime, forms | writing `*.api.ts`, `*.hooks.ts`, `*.schemas.ts` |
+| `07-features.md` | §9 per-screen behaviour + acceptance criteria | building or changing a screen |
+| `08-quality-and-release.md` | §10 NFRs, §11 testing, §12 CI + release | tests, CI, builds, store submission |
+| `09-roadmap.md` | §13 phases, §14 metrics, §15 open questions, §17 understanding plan | planning a phase or checking what's next |
+| `../SCHEMA.md` | ER diagram, life of a ride, automatic behaviour, RLS summary | any database question — read this before `05-database.md` |
 
-2. Start the app
+## Typical tasks → what to read
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+| Task | Read |
+|---|---|
+| Port a design-system component | `04-design-system.md` |
+| Add a table or RPC | `../SCHEMA.md`, `05-database.md` |
+| Build a screen end to end | `07-features.md` (that screen), `06-client-data.md`, `03-structure.md` |
+| Start a new phase | `09-roadmap.md` (that phase + its gate), then the files the phase touches |
