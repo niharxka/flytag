@@ -21,22 +21,25 @@ export function AuthCallback({ error }: { error?: string }) {
   const failed = error ?? (!initializing ? 'Sign-in didn’t finish. Try again.' : undefined);
   return (
     <Backdrop tone="sky">
-      <SafeAreaView className="flex-1 items-center justify-center gap-space-4 px-space-5">
-        {failed ? (
-          <View className="gap-space-4 self-stretch">
-            <Text
-              className="type-body rounded-md bg-surface p-space-4 text-center text-danger"
-              accessibilityRole="alert"
-            >
-              {failed}
-            </Text>
-            <Button variant="glass" size="lg" block onPress={() => router.replace('/welcome')}>
-              Back
-            </Button>
-          </View>
-        ) : (
-          <ActivityIndicator color={c.onAtmos} accessibilityLabel="Signing you in" />
-        )}
+      <SafeAreaView className="flex-1">
+        {/* Padding lives on this inner view: on the web SafeAreaView replaces its own side padding with the (zero) insets. */}
+        <View className="flex-1 items-center justify-center gap-space-4 px-space-5">
+          {failed ? (
+            <View className="gap-space-4 self-stretch">
+              <Text
+                className="type-body rounded-md bg-surface p-space-4 text-center text-danger"
+                accessibilityRole="alert"
+              >
+                {failed}
+              </Text>
+              <Button variant="glass" size="lg" block onPress={() => router.replace('/welcome')}>
+                Back
+              </Button>
+            </View>
+          ) : (
+            <ActivityIndicator color={c.onAtmos} accessibilityLabel="Signing you in" />
+          )}
+        </View>
       </SafeAreaView>
     </Backdrop>
   );

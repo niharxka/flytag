@@ -27,7 +27,6 @@ function MemberRow({
   onCall: () => void;
 }) {
   const photo = useAvatarUrl(member.avatarPath);
-  const name = member.isMe ? `${member.displayName} (you)` : member.displayName;
   return (
     <Pressable
       onPress={() => router.push({ pathname: '/riders/[userId]', params: { userId: member.userId } })}
@@ -36,8 +35,13 @@ function MemberRow({
       accessibilityHint="Opens their profile"
     >
       <RiderRow
-        name={name}
-        college={[member.isHost ? 'Host' : null, member.home].filter(Boolean).join(' · ') || undefined}
+        name={member.displayName}
+        // "You" goes on the second line, not in the name, so the avatar's initials stay "J", not "J(".
+        college={
+          [member.isMe ? 'You' : null, member.isHost ? 'Host' : null, member.home]
+            .filter(Boolean)
+            .join(' · ') || undefined
+        }
         src={photo.data}
         tag={member.intent ? INTENT_TAG[member.intent] : undefined}
         phoneShared={member.phoneShared}

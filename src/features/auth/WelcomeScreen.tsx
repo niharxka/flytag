@@ -20,37 +20,40 @@ export function WelcomeScreen() {
 
   return (
     <Backdrop tone="sky">
-      <SafeAreaView className="flex-1 items-center justify-center gap-space-5 px-space-5">
-        <Plane width={230} animate="glide" delay={300} label="" />
-        <View className="items-center">
-          <Text
-            className="type-display text-center text-on-atmos"
-            maxFontSizeMultiplier={1.2}
-            accessibilityRole="header"
-          >
-            FlyTag.
-          </Text>
-          <Text className="type-body-lg mt-space-3 text-center text-on-atmos">
-            Tag along with fellow classmates to and from the airport.
-          </Text>
-        </View>
-        {/* items-center shrinks children to their content; self-stretch keeps the buttons full width. */}
-        <View className="gap-space-3 self-stretch">
-          <GoogleButton onPress={() => google.mutate()} loading={google.isPending} />
-          <Text className="type-body-sm text-center text-on-atmos">Use your @ucsd.edu Google account.</Text>
-          {google.error && (
+      <SafeAreaView className="flex-1">
+        {/* Padding lives on this inner view: on the web SafeAreaView replaces its own side padding with the (zero) insets. */}
+        <View className="flex-1 items-center justify-center gap-space-5 px-space-5">
+          <Plane width={230} animate="glide" delay={300} label="" />
+          <View className="items-center">
             <Text
-              className="type-body-sm rounded-md bg-surface px-space-4 py-space-3 text-center text-danger"
-              accessibilityRole="alert"
+              className="type-display text-center text-on-atmos"
+              maxFontSizeMultiplier={1.2}
+              accessibilityRole="header"
             >
-              {errorMessage(google.error)}
+              FlyTag.
             </Text>
-          )}
-          {EMAIL_CODES && (
-            <Button variant="glass" block onPress={() => router.push('/sign-in')}>
-              Use an email code (dev)
-            </Button>
-          )}
+            <Text className="type-body-lg mt-space-3 text-center text-on-atmos">
+              Tag along with fellow classmates to and from the airport.
+            </Text>
+          </View>
+          {/* items-center shrinks children to their content; self-stretch keeps the buttons full width. */}
+          <View className="gap-space-3 self-stretch">
+            <GoogleButton onPress={() => google.mutate()} loading={google.isPending} />
+            <Text className="type-body-sm text-center text-on-atmos">Use your @ucsd.edu Google account.</Text>
+            {google.error && (
+              <Text
+                className="type-body-sm rounded-md bg-surface px-space-4 py-space-3 text-center text-danger"
+                accessibilityRole="alert"
+              >
+                {errorMessage(google.error)}
+              </Text>
+            )}
+            {EMAIL_CODES && (
+              <Button variant="glass" block onPress={() => router.push('/sign-in')}>
+                Use an email code (dev)
+              </Button>
+            )}
+          </View>
         </View>
       </SafeAreaView>
     </Backdrop>

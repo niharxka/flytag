@@ -44,11 +44,19 @@ export function Menu({ items, active, onSelect, label }: Props) {
               >
                 {n}
               </Text>
-              <Text className={`type-body flex-1 ${on ? 'text-on-inverse' : 'text-ink'}`} numberOfLines={1}>
+              {/* With a value, the label keeps its full width and a long value ("Thurgood Marshall
+                  College") is the one that gets shortened; without one, the label fills the row. */}
+              <Text
+                className={`type-body ${it.meta ? 'shrink-0' : 'flex-1'} ${on ? 'text-on-inverse' : 'text-ink'}`}
+                numberOfLines={1}
+              >
                 {it.label}
               </Text>
               {it.meta && (
-                <Text className={`font-400 text-[14px] opacity-80 ${on ? 'text-on-inverse' : 'text-ink'}`}>
+                <Text
+                  className={`flex-1 text-right font-400 text-[14px] opacity-80 ${on ? 'text-on-inverse' : 'text-ink'}`}
+                  numberOfLines={1}
+                >
                   {it.meta}
                 </Text>
               )}
