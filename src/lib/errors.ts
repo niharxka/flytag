@@ -12,6 +12,8 @@ const AUTH_COPY: Record<string, string> = {
   over_request_rate_limit: 'Too many tries. Wait a minute, then try again.',
   email_address_invalid: 'That doesn’t look like an email address.',
   validation_failed: 'That doesn’t look like an email address.',
+  // Sign in sends shouldCreateUser: false, so an unknown email comes back as this.
+  otp_disabled: 'No account for that email yet. Sign up instead.',
 };
 
 // RPC errors: our SQL functions raise the code as the message (see each migration's header).

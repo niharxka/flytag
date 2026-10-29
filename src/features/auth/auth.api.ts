@@ -5,11 +5,17 @@ import { supabase } from '@/lib/supabase';
 // Re-exported so the rest of the app never imports Supabase directly (lint rule, §4.2).
 export type { Session };
 
-/** Email a 6-digit sign-in code. Creates the account on first use (the hook rejects non-UCSD). */
-export async function sendCode(email: string, displayName?: string): Promise<void> {
+/**
+ * Email a 6-digit code. With `signUp` it creates the account if needed (the hook rejects
+ * non-UCSD); without it the email must already have an account, or Supabase answers
+ * `otp_disabled`. Existing riders who sign up again just get a code; their name is kept.
+ */
+export async function sendCode(email: string, signUp?: { displayName: string }): Promise<void> {
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: true, data: displayName ? { display_name: displayName } : undefined },
+    options: signUp
+      ? { shouldCreateUser: true, data: { display_name: signUp.displayName } }
+      : { shouldCreateUser: false },
   });
   if (error) throw error;
 }

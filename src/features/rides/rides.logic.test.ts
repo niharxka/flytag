@@ -10,7 +10,7 @@ const ride = (id: string, departAt: string): Ride => ({
   riderNames: [],
   hostId: null,
   hostName: null,
-  hostCollege: null,
+  hostHome: null,
   isMember: false,
   isHost: false,
   meetSpot: null,

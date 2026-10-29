@@ -1,10 +1,12 @@
 import { Text, View } from 'react-native';
 
 import { GlassView } from './GlassView';
+import { Icon } from './Icon';
 import { PressableScale } from './PressableScale';
 
 type Props = {
-  items: { label: string; meta?: string }[];
+  /** chevron: a trailing > that tells people the row opens something (e.g. the editor). */
+  items: { label: string; meta?: string; chevron?: boolean }[];
   /** Index of the highlighted row, if any. */
   active?: number;
   onSelect?: (index: number) => void;
@@ -42,6 +44,14 @@ export function Menu({ items, active, onSelect, label }: Props) {
                 <Text className={`font-400 text-[14px] opacity-80 ${on ? 'text-on-inverse' : 'text-ink'}`}>
                   {it.meta}
                 </Text>
+              )}
+              {it.chevron && (
+                <Icon
+                  name="chevron-right"
+                  size={18}
+                  strokeWidth={2}
+                  className={on ? 'text-on-inverse' : 'text-ink-muted'}
+                />
               )}
             </View>
           </PressableScale>

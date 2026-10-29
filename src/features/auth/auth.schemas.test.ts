@@ -1,4 +1,4 @@
-import { codeSchema, emailSchema, signInSchema } from './auth.schemas';
+import { codeSchema, emailSchema, signInSchema, signUpSchema } from './auth.schemas';
 
 describe('auth schemas', () => {
   it('accepts UCSD email, trimmed and lowercased', () => {
@@ -12,8 +12,13 @@ describe('auth schemas', () => {
   it('rejects subdomains', () => {
     expect(emailSchema.safeParse('me@eng.ucsd.edu').success).toBe(false);
   });
-  it('treats a blank display name as not given', () => {
-    expect(signInSchema.parse({ email: 'a@ucsd.edu', displayName: '   ' }).displayName).toBeUndefined();
+  it('sign up needs a display name; a blank one doesn’t count', () => {
+    const r = signUpSchema.safeParse({ email: 'a@ucsd.edu', displayName: '   ' });
+    expect(r.success).toBe(false);
+    expect(r.error?.issues[0].message).toBe('Add the name riders will see.');
+  });
+  it('sign in needs only the email', () => {
+    expect(signInSchema.safeParse({ email: 'a@ucsd.edu' }).success).toBe(true);
   });
   it('needs exactly 6 digits for a code', () => {
     expect(codeSchema.safeParse('123456').success).toBe(true);

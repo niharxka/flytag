@@ -8,6 +8,8 @@ describe('errorMessage', () => {
   });
   it('maps known auth codes', () => {
     expect(errorMessage({ code: 'otp_expired', status: 403 })).toMatch(/wrong or has expired/);
+    // Sign in with an email that has no account (shouldCreateUser: false).
+    expect(errorMessage({ code: 'otp_disabled', status: 422 })).toMatch(/Sign up instead/);
   });
   it('treats any 429 as a rate limit', () => {
     expect(errorMessage({ status: 429, code: 'something_new' })).toMatch(/Wait a minute/);

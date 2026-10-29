@@ -47,7 +47,7 @@ export function RideSummary({ rideId }: { rideId: string }) {
   }
 
   const r = ride.data;
-  const eyebrow = [formatRideDate(r.departAt), [r.hostName, r.hostCollege].filter(Boolean).join(', ')]
+  const eyebrow = [formatRideDate(r.departAt), [r.hostName, r.hostHome].filter(Boolean).join(', ')]
     .filter(Boolean)
     .join(' · ');
 

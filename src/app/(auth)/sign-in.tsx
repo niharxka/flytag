@@ -1,5 +1,5 @@
-import { SignInForm } from '@/features/auth';
+import { AuthForm } from '@/features/auth';
 
 export default function SignInRoute() {
-  return <SignInForm />;
+  return <AuthForm mode="sign-in" />;
 }

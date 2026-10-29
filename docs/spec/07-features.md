@@ -7,15 +7,17 @@
 Each feature lists behaviour, states, and acceptance criteria (AC). "Empty / loading / error" states are required for every data screen.
 
 ### 9.1 Welcome (01)
-- Sky backdrop, plane glides in once (2.2 s), "FlyTag." display, lead copy, glass "Get started" → Sign in.
-- Shown only when signed out. Reduced motion: plane at rest.
+- Sky backdrop, plane glides in once (2.2 s), "FlyTag." display, lead copy, centred. Two glass buttons: "Get started" → Sign up, "Sign in" → Sign in.
+- Shown only when signed out. The session persists on the device and refreshes itself, so riders stay signed in indefinitely (no inactivity sign-out); Welcome is for new users, sign-outs and reinstalls. Reduced motion: plane at rest.
 - **AC:** first launch shows animation once; returning signed-out users still see Welcome; signed-in users never see it.
 
-### 9.2 Sign in + verify (02, 02b)
-- Fields: School email (hint "Only .edu addresses." → change to "Use your @ucsd.edu email."), Display name. "Let's go" calls `signInWithOtp({ email, options: { shouldCreateUser: true, data: { display_name } } })`.
+### 9.2 Sign up / sign in + verify (02, 02b)
+- Sign up: School email (hint "Use your @ucsd.edu email."), Display name (required). "Let's go" calls `signInWithOtp({ email, options: { shouldCreateUser: true, data: { display_name } } })`.
+- Sign in: School email only. Calls `signInWithOtp({ email, options: { shouldCreateUser: false } })`; an unknown email returns `otp_disabled` → "No account for that email yet. Sign up instead."
+- Each screen links to the other ("Already have an account? Sign in" / "New here? Sign up").
 - Verify screen: 6 cells, auto-advance, paste support, iOS one-time-code autofill (`textContentType="oneTimeCode"`), resend after 60 s, "Use a different email".
-- Errors: non-UCSD domain (client + hook), wrong/expired code, rate-limited.
-- **AC:** non-UCSD email can't create an account even by calling the API directly; returning user signs in without re-entering display name (prefill ignored for existing users).
+- Errors: non-UCSD domain (client + hook), no account (sign in), wrong/expired code, rate-limited.
+- **AC:** non-UCSD email can't create an account even by calling the API directly; returning user signs in with just their email; an existing user who uses Sign up still gets a code and keeps their name.
 
 ### 9.3 Onboarding (02c)
 - Home college (required), intent tag (optional: Networking / FlyPal / none), phone + "Share with my co-riders" toggle (optional, off by default). Sets `onboarded_at`.

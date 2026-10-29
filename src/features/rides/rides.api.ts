@@ -16,7 +16,7 @@ export type Ride = {
   riderNames: string[];
   hostId: string | null;
   hostName: string | null;
-  hostCollege: string | null;
+  hostHome: string | null;
   isMember: boolean;
   isHost: boolean;
   meetSpot: string | null;
@@ -51,7 +51,7 @@ function toRide(r: RideCardRow): Ride {
     riderNames: r.rider_names ?? [],
     hostId: r.host_id,
     hostName: r.host_name,
-    hostCollege: r.host_college,
+    hostHome: r.host_home,
     isMember: r.is_member ?? false,
     isHost: r.is_host ?? false,
     meetSpot: r.meet_spot,

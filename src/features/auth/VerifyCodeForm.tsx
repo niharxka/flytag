@@ -33,16 +33,13 @@ export function VerifyCodeForm({ email }: { email: string }) {
   };
 
   const onResend = () => resend.mutate({ email }, { onSuccess: () => setWait(RESEND_AFTER_S) });
+  // Verify sits under Sign in; with no history (redirect, reload) go there instead of nowhere.
+  const back = () => (router.canGoBack() ? router.back() : router.replace('/sign-in'));
 
   return (
     <Backdrop>
       <SafeAreaView className="flex-1">
-        <AppHeader
-          eyebrow="Check your email"
-          title="Enter code"
-          onBack={() => router.back()}
-          trailing={null}
-        />
+        <AppHeader eyebrow="Check your email" title="Enter code" onBack={back} trailing={null} />
         <View className="gap-space-5 px-space-4">
           <Text className="type-body text-ink">
             We sent a 6-digit code to <Text className="font-600">{email}</Text>.
@@ -69,7 +66,7 @@ export function VerifyCodeForm({ email }: { email: string }) {
             >
               {wait > 0 ? `Send a new code in ${wait} s` : 'Send a new code'}
             </Button>
-            <Button variant="ghost" block onPress={() => router.back()}>
+            <Button variant="ghost" block onPress={back}>
               Use a different email
             </Button>
           </View>

@@ -300,11 +300,11 @@ export function Gallery() {
               label="Profile"
               active={0}
               items={[
-                { label: 'Display name', meta: 'Niharika' },
+                { label: 'Display name', meta: 'Niharika', chevron: true },
                 { label: 'School email', meta: 'Verified' },
-                { label: 'Home college', meta: 'Sixth' },
-                { label: 'Notifications', meta: 'On' },
-                { label: 'Safety & reporting' },
+                { label: 'Home college', meta: 'Sixth', chevron: true },
+                { label: 'Notifications', meta: 'On', chevron: true },
+                { label: 'Safety & reporting', chevron: true },
               ]}
             />
           </Section>

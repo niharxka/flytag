@@ -59,14 +59,14 @@ isOneToOne: true
                   ]
                 },"profiles": {
                   Row: {
-                    "avatar_path": string | null,"college_id": string | null,"created_at": string,"display_name": string,"id": string,"intent": Database["public"]['Enums']["rider_intent"] | null,"onboarded_at": string | null,"updated_at": string
+                    "avatar_path": string | null,"college_id": string | null,"created_at": string,"display_name": string,"home_label": string | null,"id": string,"intent": Database["public"]['Enums']["rider_intent"] | null,"onboarded_at": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "avatar_path"?: string | null,"college_id"?: string | null,"created_at"?: string,"display_name": string,"id": string,"intent"?: Database["public"]['Enums']["rider_intent"] | null,"onboarded_at"?: string | null,"updated_at"?: string
+                    "avatar_path"?: string | null,"college_id"?: string | null,"created_at"?: string,"display_name": string,"home_label"?: string | null,"id": string,"intent"?: Database["public"]['Enums']["rider_intent"] | null,"onboarded_at"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "avatar_path"?: string | null,"college_id"?: string | null,"created_at"?: string,"display_name"?: string,"id"?: string,"intent"?: Database["public"]['Enums']["rider_intent"] | null,"onboarded_at"?: string | null,"updated_at"?: string
+                    "avatar_path"?: string | null,"college_id"?: string | null,"created_at"?: string,"display_name"?: string,"home_label"?: string | null,"id"?: string,"intent"?: Database["public"]['Enums']["rider_intent"] | null,"onboarded_at"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -134,7 +134,7 @@ isOneToOne: false
           Views: {
             "ride_cards": {
                   Row: {
-                    "depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"est_total_cost_cents": number | null,"host_college": string | null,"host_id": string | null,"host_name": string | null,"id": string,"is_host": boolean | null,"is_member": boolean | null,"meet_spot": string | null,"notes": string | null,"rider_names": (string)[] | null,"seats_max": number,"seats_taken": number | null,"status": Database["public"]['Enums']["ride_status"]
+                    "depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"est_total_cost_cents": number | null,"host_home": string | null,"host_id": string | null,"host_name": string | null,"id": string,"is_host": boolean | null,"is_member": boolean | null,"meet_spot": string | null,"notes": string | null,"rider_names": (string)[] | null,"seats_max": number,"seats_taken": number | null,"status": Database["public"]['Enums']["ride_status"]
                   }
                   ComputedFields: never
                   Relationships: [
@@ -160,7 +160,7 @@ isOneToOne: false
               "depart_at": string,
 "direction": Database["public"]['Enums']["ride_direction"],
 "est_total_cost_cents": number | null,
-"host_college": string | null,
+"host_home": string | null,
 "host_id": string | null,
 "host_name": string | null,
 "id": string,
@@ -184,7 +184,7 @@ isOneToOne: false
               "depart_at": string,
 "direction": Database["public"]['Enums']["ride_direction"],
 "est_total_cost_cents": number | null,
-"host_college": string | null,
+"host_home": string | null,
 "host_id": string | null,
 "host_name": string | null,
 "id": string,

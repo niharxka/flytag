@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useSession } from '@/features/auth';
-import { useMyProfile } from '@/features/profile';
+import { useAvatarUrl, useMyProfile } from '@/features/profile';
 import { size, spacing } from '@/theme/tokens';
 import { useThemeMode } from '@/theme/useThemeMode';
 import { AppHeader, Avatar, Backdrop, Fab, IconButton, SegmentedControl, TAB_BAR_HEIGHT } from '@/ui';
@@ -18,6 +18,7 @@ export function RidesScreen() {
   const insets = useSafeAreaInsets();
   const { session } = useSession();
   const profile = useMyProfile(session?.user.id);
+  const photo = useAvatarUrl(profile.data?.avatarPath);
   const { direction, setDirection } = useRidesUi();
   const { theme, toggleTheme } = useThemeMode();
   const postRide = () => router.push('/rides/new');
@@ -42,6 +43,7 @@ export function RidesScreen() {
               />
               <Avatar
                 name={profile.data?.displayName}
+                src={photo.data}
                 size={48}
                 onPress={() => router.push('/profile')}
                 buttonLabel="Open profile"

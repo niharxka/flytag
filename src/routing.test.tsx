@@ -21,13 +21,18 @@ jest.mock('@/features/auth', () => ({
   useSession: () => ({ session: mockAuth.session, initializing: false }),
   useSignOut: () => ({ mutate: jest.fn(), isPending: false }),
   WelcomeScreen: mockScreen('Welcome screen'),
-  SignInForm: mockScreen('Sign in screen'),
+  AuthForm: ({ mode }: { mode: string }) => {
+    const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
+    return <Text>{mode === 'sign-up' ? 'Sign up screen' : 'Sign in screen'}</Text>;
+  },
   VerifyCodeForm: mockScreen('Verify screen'),
 }));
 jest.mock('@/features/profile', () => ({
   useMyProfile: () => ({ isPending: false, data: { onboardedAt: mockProfile.onboardedAt } }),
   OnboardingForm: mockScreen('Onboarding screen'),
   ProfileScreen: mockScreen('Profile screen'),
+  EditProfileForm: mockScreen('Edit profile screen'),
+  useAvatarUrl: () => ({ data: undefined }),
 }));
 jest.mock('@/features/rides', () => ({
   RidesScreen: mockScreen('Rides screen'),
@@ -50,6 +55,14 @@ describe('auth gate', () => {
     await renderRouter('./src/app', { initialUrl: '/' });
     expect(screen).toHavePathname('/welcome');
     expect(screen.getByText('Welcome screen')).toBeTruthy();
+  });
+
+  it('signed out: Sign up and Sign in are separate screens', async () => {
+    mockAuth.session = null;
+    await renderRouter('./src/app', { initialUrl: '/sign-up' });
+    expect(screen.getByText('Sign up screen')).toBeTruthy();
+    await renderRouter('./src/app', { initialUrl: '/sign-in' });
+    expect(screen.getByText('Sign in screen')).toBeTruthy();
   });
 
   it('signed in, not onboarded: goes to Onboarding, even from /welcome', async () => {

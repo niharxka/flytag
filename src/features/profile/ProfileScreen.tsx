@@ -5,16 +5,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSession, useSignOut } from '@/features/auth';
 import { errorMessage } from '@/lib/errors';
 import { useThemeColors, useThemeMode } from '@/theme/useThemeMode';
-import { AppHeader, Avatar, Backdrop, Button, Menu, SegmentedControl, Tag } from '@/ui';
+import { AppHeader, Avatar, Backdrop, Button, IconButton, Menu, SegmentedControl, Tag } from '@/ui';
 
-import { useMyProfile } from './profile.hooks';
+import { useAvatarUrl, useMyProfile } from './profile.hooks';
 
 const INTENT_TAG = {
   networking: { label: 'Networking', tone: 'sky' },
   flypal: { label: 'FlyPal', tone: 'deep' },
 } as const;
 
-/** Screen 06 (§9.9), read-only for now: editing and settings arrive in Phase 7. */
+/** Screen 06 (§9.9). Tapping a detail, the avatar or the header pencil opens the edit screen. */
 export function ProfileScreen() {
   const c = useThemeColors();
   const { session } = useSession();
@@ -22,33 +22,48 @@ export function ProfileScreen() {
   const signOut = useSignOut();
   const { theme, setTheme } = useThemeMode();
   const p = profile.data;
+  const photo = useAvatarUrl(p?.avatarPath);
+  const edit = () => router.push('/settings/edit-profile');
 
   return (
     <Backdrop>
       <SafeAreaView className="flex-1" edges={['top']}>
         <ScrollView contentContainerClassName="pb-[140px]">
-          <AppHeader title="Profile" trailing={null} />
+          <AppHeader
+            title="Profile"
+            trailing={
+              p ? <IconButton icon="pencil" label="Edit profile" variant="glass" onPress={edit} /> : null
+            }
+          />
           {!p ? (
             <ActivityIndicator color={c.inkMuted} accessibilityLabel="Loading profile" />
           ) : (
             <View className="gap-space-5 px-space-4">
               <View className="items-center gap-space-3">
-                <Avatar name={p.displayName} size={88} />
+                <Avatar
+                  name={p.displayName}
+                  src={photo.data}
+                  size={88}
+                  onPress={edit}
+                  buttonLabel="Edit profile"
+                />
                 <Text className="font-800 text-[28px] leading-[32px] tracking-[-0.56px] text-ink">
                   {p.displayName}
                 </Text>
                 <View className="flex-row gap-space-2">
-                  {p.collegeName && <Tag tone="glass" icon="pin" label={p.collegeName} />}
+                  {p.homeName && <Tag tone="glass" icon="pin" label={p.homeName} />}
                   {p.intent && <Tag tone={INTENT_TAG[p.intent].tone} label={INTENT_TAG[p.intent].label} />}
                 </View>
               </View>
               <Menu
                 label="Profile"
                 items={[
-                  { label: 'Display name', meta: p.displayName },
+                  { label: 'Display name', meta: p.displayName, chevron: true },
+                  { label: 'Home', meta: p.homeName ?? undefined, chevron: true },
                   { label: 'School email', meta: session?.user.email },
-                  { label: 'Home college', meta: p.collegeName ?? undefined },
                 ]}
+                // Email is your sign-in, so it can't change here; the other rows open the editor.
+                onSelect={(i) => i !== 2 && edit()}
               />
               <View className="gap-space-2">
                 <Text className="type-label px-space-2 text-ink-muted">Theme</Text>

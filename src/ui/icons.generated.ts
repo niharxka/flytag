@@ -27,6 +27,12 @@ export const icons = {
       "d": "M8.5 9.5h7M8.5 12.5h4.5"
     }
   ],
+  "chevron-left": [
+    {
+      "type": "path",
+      "d": "m14.5 5.5-6.5 6.5 6.5 6.5"
+    }
+  ],
   "chevron-right": [
     {
       "type": "path",
@@ -63,6 +69,16 @@ export const icons = {
     {
       "type": "path",
       "d": "M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"
+    }
+  ],
+  "pencil": [
+    {
+      "type": "path",
+      "d": "M4 20h4L18.5 9.5a2.83 2.83 0 0 0-4-4L4 16v4z"
+    },
+    {
+      "type": "path",
+      "d": "m13.5 6.5 4 4"
     }
   ],
   "phone": [

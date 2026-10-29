@@ -18,6 +18,7 @@ export default function AppLayout() {
         }}
       />
       <Stack.Screen name="rides/[rideId]" />
+      <Stack.Screen name="settings/edit-profile" />
     </Stack>
   );
 }

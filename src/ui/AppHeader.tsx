@@ -22,8 +22,9 @@ export function AppHeader({ title, eyebrow, onBack, trailing, userName, userPhot
   return (
     <View className="flex-row items-end justify-between gap-space-4 px-space-4 pb-space-4 pt-space-5">
       <View className="min-w-0 flex-1 flex-row items-center gap-space-3">
-        {/* The icon set has no back arrow; the artifact uses home for "leave this screen". */}
-        {onBack && <IconButton icon="home" label="Go back" variant="glass" size="sm" onPress={onBack} />}
+        {onBack && (
+          <IconButton icon="chevron-left" label="Go back" variant="glass" size="sm" onPress={onBack} />
+        )}
         <View className="min-w-0 flex-1">
           {eyebrow && <Text className="type-label mb-space-1 text-ink-muted">{eyebrow}</Text>}
           <Text
