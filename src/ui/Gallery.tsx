@@ -12,7 +12,9 @@ import {
   Button,
   ChatBubble,
   ChatComposer,
+  CodeField,
   ContentCard,
+  EmptyState,
   Fab,
   GlassView,
   Icon,
@@ -76,6 +78,7 @@ export function Gallery() {
   const [direction, setDirection] = useState(0);
   const [seats, setSeats] = useState(4);
   const [message, setMessage] = useState('');
+  const [code, setCode] = useState('418');
   const [replayKey, setReplayKey] = useState(0);
 
   return (
@@ -163,6 +166,11 @@ export function Gallery() {
             />
             <TextField label="Display name" placeholder="What riders call you" variant="glass" />
             <TextField label="Verification code" defaultValue="12345" error="Codes are 6 digits." />
+          </Section>
+
+          <Section title="CodeField">
+            <CodeField value={code} onChangeText={setCode} />
+            <CodeField value="123456" onChangeText={() => {}} error="That code is wrong or has expired." />
           </Section>
 
           <Section title="Tag">
@@ -296,6 +304,21 @@ export function Gallery() {
               title="Safety first"
               body="Only verified @ucsd.edu students can see rides."
             />
+          </Section>
+
+          <Section title="EmptyState">
+            <GlassView className="rounded-lg">
+              <EmptyState
+                icon="plane-depart"
+                title="No rides yet"
+                body="Be the first to post one for this day."
+                action={
+                  <Button variant="sky" icon="plus">
+                    Post a ride
+                  </Button>
+                }
+              />
+            </GlassView>
           </Section>
 
           <Section title="TabBar">

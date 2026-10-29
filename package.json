@@ -4,6 +4,10 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@expo/ui": "~58.0.25",
+    "@hookform/resolvers": "^6.0.2",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@supabase/supabase-js": "^2.118.0",
+    "@tanstack/react-query": "^5.105.0",
     "expo": "~58.0.21",
     "expo-blur": "~58.0.5",
     "expo-constants": "~58.0.13",
@@ -19,9 +23,11 @@
     "expo-symbols": "~58.0.4",
     "expo-system-ui": "~58.0.7",
     "expo-web-browser": "~58.0.7",
+    "libphonenumber-js": "^1.13.15",
     "nativewind": "^4.2.7",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "react-hook-form": "^7.91.0",
     "react-native": "0.88.0",
     "react-native-gesture-handler": "~3.3.0",
     "react-native-reanimated": "4.7.1",
@@ -30,7 +36,8 @@
     "react-native-svg": "15.16.0",
     "react-native-web": "~0.21.4",
     "react-native-worklets": "0.13.0",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@testing-library/react-native": "^14.1.0",
@@ -43,6 +50,7 @@
     "jest": "^30.5.2",
     "jest-expo": "^58.0.13",
     "prettier": "^3.9.10",
+    "supabase": "^2.122.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -55,13 +63,22 @@
     "test": "jest",
     "tokens": "node scripts/build-tokens.ts",
     "format": "prettier --write .",
-    "icons": "node scripts/build-icons.ts"
+    "icons": "node scripts/build-icons.ts",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "db:types": "supabase gen types typescript --local > src/lib/database.types.ts"
   },
   "private": true,
   "jest": {
     "preset": "jest-expo",
     "setupFiles": [
       "<rootDir>/jest.setup.ts"
-    ]
+    ],
+    "moduleNameMapper": {
+      "\\.css$": "<rootDir>/jest.css-stub.js",
+      "^react-native-reanimated/mock$": "<rootDir>/jest.reanimated-mock.js"
+    }
   }
 }

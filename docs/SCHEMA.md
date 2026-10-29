@@ -1,6 +1,14 @@
 # FlyTag database map
 
 > Keep this file updated in the same PR as every migration. Full column details: `docs/spec/05-database.md` §6.
+>
+> **Built so far (Phase 2):** `colleges`, `profiles`, `profile_private`, the signup hook and the new-user trigger. Everything else on this page is the plan.
+
+| Migration | Adds |
+|---|---|
+| `20261029000001_colleges.sql` | `colleges` + the 9 rows (8 colleges + Graduate student) |
+| `20261029000002_profiles.sql` | `rider_intent` enum, `profiles`, `profile_private`, `set_updated_at()`, `on_auth_user_created` trigger |
+| `20261029000003_auth_hook.sql` | `hook_restrict_signup_to_ucsd` (enabled in `supabase/config.toml`) |
 
 ## 1. The diagram
 
@@ -83,8 +91,9 @@ Each item lives in the migration named next to it. If something "magically" happ
 
 | Trigger | What happens | Migration |
 |---|---|---|
-| New `auth.users` row | create `profiles` + `profile_private` | `*_profiles.sql` |
-| Signup attempt | `before-user-created` hook rejects non-UCSD emails | `*_auth_hook.sql` |
+| New `auth.users` row | create `profiles` + `profile_private` (name from sign-in, else email prefix) | `20261029000002_profiles.sql` |
+| Signup attempt | `before-user-created` hook rejects non-UCSD emails | `20261029000003_auth_hook.sql` |
+| Any `profiles` update | `updated_at` stamped | `20261029000002_profiles.sql` |
 | `ride_members` insert | notify other members (`rider_joined`) | `*_notifications.sql` |
 | `messages` insert | notify other members (`new_message`, max 1 unread per 10 min) | `*_notifications.sql` |
 | `update_ride` / `cancel_ride` | notify members | `*_notifications.sql` |
@@ -96,8 +105,11 @@ Each item lives in the migration named next to it. If something "magically" happ
 
 | You can read… | …if |
 |---|---|
-| any profile | you're signed in and neither of you blocked the other |
+| any profile | you're signed in and neither of you blocked the other (block check arrives with `blocks` in Phase 7) |
 | your own `profile_private` | always (nobody else, ever) |
+| colleges | you're signed in |
+
+**Who can write what (so far):** your own `profiles` row, only `display_name`, `college_id`, `intent`, `avatar_path`, `onboarded_at` (column grants); your own `profile_private` settings. Rows themselves are only created by the trigger. `colleges` changes only via migrations.
 | a ride and its members | you're signed in and haven't blocked the host |
 | a ride's messages | you're a current member of that ride |
 | someone's phone number | you're both current members of the same ride **and** they turned on sharing (via `get_rider_contact` only) |

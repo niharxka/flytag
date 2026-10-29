@@ -26,7 +26,7 @@ Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and re
 - `npm run db:start` (supabase start) · `npm run db:reset` (reapply migrations + seed) · `npm run db:test` (pgTAP)
 - `npm run db:types` — regenerate `src/lib/database.types.ts` after ANY migration
 - `npm run tokens` — regenerate `src/theme/tokens.ts` + `global.css` from tokens.json
-- Today `package.json` has `start`, `lint`, `typecheck`, `test`, `tokens`, `icons` (assets/icons → `src/ui/icons.generated.ts`), `format`. The `db:*` scripts arrive with Supabase in Phase 2 — don't assume they run before then. Until Phase 6 use `npx expo start` (Expo Go), not `--dev-client`.
+- Today `package.json` has `start`, `lint`, `typecheck`, `test`, `tokens`, `icons` (assets/icons → `src/ui/icons.generated.ts`), `format`. `db:start`/`db:stop`/`db:reset`/`db:test`/`db:types` run the local Supabase stack (Docker). OTP emails land in Mailpit at http://127.0.0.1:54324. The phone reaches the stack via the Mac's Wi-Fi IP in `.env`. Until Phase 6 use `npx expo start` (Expo Go), not `--dev-client`.
 
 ## Architecture rules
 - `src/app/` is routes only: compose feature components, read params, nothing else. Keep files short.

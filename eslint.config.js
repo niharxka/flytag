@@ -37,6 +37,20 @@ module.exports = defineConfig([
     rules: { 'no-restricted-imports': ['error', { patterns: [featureInternals, supabase] }] },
   },
   {
+    // Every file in src/app becomes a route that Metro bundles into the app, so tests (and
+    // their Node-only imports) must live elsewhere. See src/routing.test.tsx.
+    files: ['src/app/**/*.test.*'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Program',
+          message: 'Tests can’t live in src/app: every file there is bundled as a route.',
+        },
+      ],
+    },
+  },
+  {
     files: ['src/features/**'],
     ignores: ['src/features/**/*.api.ts'],
     rules: {
