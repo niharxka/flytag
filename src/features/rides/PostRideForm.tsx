@@ -26,43 +26,63 @@ import {
   TextField,
 } from '@/ui';
 
-import { useCreateRide, useNearbyRides } from './rides.hooks';
+import type { Ride } from './rides.api';
+import { useCreateRide, useNearbyRides, useUpdateRide } from './rides.hooks';
 import { postRideSchema, type PostRide, type PostRideInput } from './rides.schemas';
 import { useRidesUi } from './rides.store';
 
 const DIRECTIONS = ['to_airport', 'to_campus'] as const;
 const DAY_MS = 86_400_000;
 
-/** Screen 04 (§9.5), shown as a native form sheet over the Rides tab. */
-export function PostRideForm() {
+/**
+ * Screen 04 (§9.5), shown as a native form sheet over the Rides tab. With `ride`, the same form
+ * edits that ride (host only): direction is fixed once posted, and seats can't go below the
+ * people already in it.
+ */
+export function PostRideForm({ ride }: { ride?: Ride }) {
   const insets = useSafeAreaInsets();
   const startDirection = useRidesUi((s) => s.direction);
+  const editing = Boolean(ride);
   const create = useCreateRide();
+  const update = useUpdateRide(ride?.id ?? '');
   // One id per open sheet: if "Post ride" is sent twice (double tap, retry after a timeout),
   // create_ride sees the same id and returns the first ride instead of making another.
   const [requestId] = useState(() => Crypto.randomUUID());
 
   const { control, handleSubmit, formState } = useForm<PostRideInput, unknown, PostRide>({
     resolver: zodResolver(postRideSchema),
-    defaultValues: {
-      direction: startDirection,
-      departAt: defaultDepartAt(),
-      seatsMax: 4,
-      meetSpot: '',
-      notes: '',
-      estTotalCostCents: '',
-    },
+    defaultValues: ride
+      ? {
+          direction: ride.direction,
+          departAt: new Date(ride.departAt),
+          seatsMax: ride.seatsMax,
+          meetSpot: ride.meetSpot ?? '',
+          notes: ride.notes ?? '',
+          estTotalCostCents: ride.estTotalCostCents == null ? '' : String(ride.estTotalCostCents / 100),
+        }
+      : {
+          direction: startDirection,
+          departAt: defaultDepartAt(),
+          seatsMax: 4,
+          meetSpot: '',
+          notes: '',
+          estTotalCostCents: '',
+        },
   });
   const direction = useWatch({ control, name: 'direction' });
   const departAt = useWatch({ control, name: 'departAt' });
-  const nearby = useNearbyRides(direction, departAt);
+  // Suggesting other rides only makes sense while posting a new one.
+  const nearby = useNearbyRides(direction, departAt, !editing);
 
   const onSubmit = handleSubmit((input) =>
-    create.mutate(
-      { input, requestId },
-      { onSuccess: (rideId) => router.replace({ pathname: '/rides/[rideId]', params: { rideId } }) },
-    ),
+    editing
+      ? update.mutate(input, { onSuccess: () => router.back() })
+      : create.mutate(
+          { input, requestId },
+          { onSuccess: (rideId) => router.replace({ pathname: '/rides/[rideId]', params: { rideId } }) },
+        ),
   );
+  const saving = editing ? update : create;
   const now = new Date();
 
   return (
@@ -76,24 +96,26 @@ export function PostRideForm() {
       contentContainerStyle={{ paddingBottom: insets.bottom + spacing.space5 }}
     >
       <Text className="type-title text-ink" accessibilityRole="header">
-        Post a ride
+        {editing ? 'Edit ride' : 'Post a ride'}
       </Text>
 
-      <Controller
-        control={control}
-        name="direction"
-        render={({ field }) => (
-          <SegmentedControl
-            label="Direction"
-            options={[
-              { label: 'To airport', icon: 'plane-depart' },
-              { label: 'To campus', icon: 'plane-land' },
-            ]}
-            value={DIRECTIONS.indexOf(field.value)}
-            onChange={(i) => field.onChange(DIRECTIONS[i])}
-          />
-        )}
-      />
+      {!editing && (
+        <Controller
+          control={control}
+          name="direction"
+          render={({ field }) => (
+            <SegmentedControl
+              label="Direction"
+              options={[
+                { label: 'To airport', icon: 'plane-depart' },
+                { label: 'To campus', icon: 'plane-land' },
+              ]}
+              value={DIRECTIONS.indexOf(field.value)}
+              onChange={(i) => field.onChange(DIRECTIONS[i])}
+            />
+          )}
+        />
+      )}
 
       <Controller
         control={control}
@@ -132,7 +154,13 @@ export function PostRideForm() {
               <Text className="type-body-sm font-600 text-ink">Max riders</Text>
               <Text className="type-body-sm text-ink-muted">Including you</Text>
             </View>
-            <SeatStepper label="Max riders" value={field.value} onChange={field.onChange} min={2} max={6} />
+            <SeatStepper
+              label="Max riders"
+              value={field.value}
+              onChange={field.onChange}
+              min={Math.max(2, ride?.seatsTaken ?? 1)}
+              max={6}
+            />
           </View>
         )}
       />
@@ -205,9 +233,9 @@ export function PostRideForm() {
         )}
       />
 
-      {create.error && (
+      {saving.error && (
         <Text className="type-body-sm text-danger" accessibilityRole="alert">
-          {errorMessage(create.error)}
+          {errorMessage(saving.error)}
         </Text>
       )}
       <View className="flex-row gap-space-3 pt-space-2">
@@ -217,8 +245,8 @@ export function PostRideForm() {
           </Button>
         </View>
         <View className="flex-1">
-          <Button variant="primary" block loading={create.isPending} onPress={() => onSubmit()}>
-            Post ride
+          <Button variant="primary" block loading={saving.isPending} onPress={() => onSubmit()}>
+            {editing ? 'Save changes' : 'Post ride'}
           </Button>
         </View>
       </View>

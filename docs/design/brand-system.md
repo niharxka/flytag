@@ -9,6 +9,8 @@ sha256 `441c4d75…`).
 Icons: one SVG per icon in `assets/icons/` (copied verbatim from the artifact's `Icon` paths:
 24 grid, 1.75 stroke, round caps/joins, `currentColor`). Names: home, search, user, users, plus,
 phone, send, plane-depart, plane-land, chat, clock, pin, bell, chevron-right, arrow-right, tag.
+Added in the app (same 24 grid / 1.75 stroke, not yet in the artifact): chevron-left (back),
+pencil (edit), sun / moon (theme), lock / lock-open (ride full / seats left on RideCard).
 
 ## Components (web class → what to port)
 
@@ -25,7 +27,7 @@ phone, send, plane-depart, plane-land, chat, clock, pin, bell, chevron-right, ar
 | RideCard | glass, radius-lg, padding 16/16/16/24, gap space-4. [direction icon 26] [date (label style, 80%) over time 700 22/28] [AvatarStack 28 max 3 over "2 of 4 seats" 13/16, or Tag go "Full" with users icon] [chevron 20 at 70%]. Highlight/selected = gradient `sky`→`sky-glow` 115°, `on-sky`. a11y label "Tue 3/18, 11:00 AM, 2 of 4 seats taken". |
 | ContentCard | radius-lg, padding space-5. Tones glass / sky gradient / charcoal (flat). Head: optional index pill ("01") + icon 26 + `heading` title; body 14/20. |
 | StatBubble | circle, numeral 56 (small: 34). Real numbers only. |
-| Timeline | pills h32, 700 14/20, joined by 2 px dashed `line-strong`. done `sky`; current `inverse` (aria-current step); next `glass` + 1.5 `line-strong` border. Done steps get hidden "(done)". |
+| Timeline | equal-width pills h32 (flex 1, gap space-2), 700 14/20, label shrinks to 75% rather than truncate. No dashed connectors in the app: with 4 steps they collapsed to stray dots (the artifact's 3-step version had them). done `sky`; current `inverse` (aria-current step); next `glass` + 1.5 `line-strong` border. Done steps get hidden "(done)". |
 | Avatar | circle (or radius-md tile), default 40. Initials (max 2) at 38% of size, weight 700. Tone from name: sum of char codes % 3 → sky, deep (`atmos-deep`/`on-atmos`), charcoal. No name → `surface` + user icon. `ring` = 2 px `mist` outline. |
 | AvatarStack | max 3, overlap -10, "+N" chip `mist-deep`. a11y "N riders". |
 | Tag | pill h26, px space-3, 600 12/16, optional icon 14 stroke 2. Tones: sky; deep (FlyPal); glass; charcoal (`inverse`); go (`surface`, `go` text + border); outline (`line-strong` border). |

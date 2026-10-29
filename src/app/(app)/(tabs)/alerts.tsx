@@ -7,7 +7,7 @@ export default function AlertsTab() {
   return (
     <Backdrop>
       <SafeAreaView className="flex-1" edges={['top']}>
-        <AppHeader eyebrow="Updates" title="Alerts" trailing={null} />
+        <AppHeader eyebrow="Updates" title="Alerts" trailing={null} inset />
         <EmptyState
           icon="bell"
           title="You’re all caught up"

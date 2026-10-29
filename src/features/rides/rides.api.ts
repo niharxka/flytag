@@ -26,6 +26,21 @@ export type Ride = {
 };
 
 /** Where the next page starts: the last ride of the previous page. */
+export type RiderIntent = Database['public']['Enums']['rider_intent'];
+
+/** A person in a ride, as the riders panel shows them. */
+export type RideMember = {
+  userId: string;
+  displayName: string;
+  home: string | null;
+  avatarPath: string | null;
+  intent: RiderIntent | null;
+  isHost: boolean;
+  /** They share a phone with co-riders. Never the number itself (see getRiderContact). */
+  phoneShared: boolean;
+  isMe: boolean;
+};
+
 export type RideCursor = { departAt: string; id: string };
 
 export const RIDES_PAGE_SIZE = 20;
@@ -34,6 +49,7 @@ export const ridesKeys = {
   all: ['rides'] as const,
   list: (direction: Direction) => [...ridesKeys.all, 'list', direction] as const,
   detail: (id: string) => [...ridesKeys.all, 'detail', id] as const,
+  members: (id: string) => [...ridesKeys.all, 'members', id] as const,
   // Rounded to the minute by the caller so typing in the picker doesn't refetch per second.
   nearby: (direction: Direction, departAt: string) =>
     [...ridesKeys.all, 'nearby', direction, departAt] as const,
@@ -100,6 +116,58 @@ export async function createRide(input: PostRide, requestId: string): Promise<st
     p_notes: input.notes,
     p_client_request_id: requestId,
   });
+  if (error) throw error;
+  return data;
+}
+
+/** Current members, host first (list_ride_members). */
+export async function listRideMembers(rideId: string): Promise<RideMember[]> {
+  const { data, error } = await supabase.rpc('list_ride_members', { p_ride_id: rideId });
+  if (error) throw error;
+  return data.map((m) => ({
+    userId: m.user_id,
+    displayName: m.display_name,
+    home: m.home,
+    avatarPath: m.avatar_path,
+    intent: m.intent,
+    isHost: m.role === 'host',
+    phoneShared: m.phone_shared,
+    isMe: m.is_me,
+  }));
+}
+
+/** Take a seat with the tag chosen for this ride. Fails with RIDE_FULL if the last seat just went. */
+export async function joinRide(rideId: string, intent: RiderIntent | null): Promise<void> {
+  const { error } = await supabase.rpc('join_ride', { p_ride_id: rideId, p_intent: intent ?? undefined });
+  if (error) throw error;
+}
+
+export async function leaveRide(rideId: string): Promise<void> {
+  const { error } = await supabase.rpc('leave_ride', { p_ride_id: rideId });
+  if (error) throw error;
+}
+
+/** Host only. Sends every editable field; direction can't change once posted. */
+export async function updateRide(rideId: string, input: PostRide): Promise<void> {
+  const { error } = await supabase.rpc('update_ride', {
+    p_ride_id: rideId,
+    p_depart_at: input.departAt.toISOString(),
+    p_seats_max: input.seatsMax,
+    p_meet_spot: input.meetSpot,
+    p_est_total_cost_cents: input.estTotalCostCents,
+    p_notes: input.notes,
+  });
+  if (error) throw error;
+}
+
+export async function cancelRide(rideId: string): Promise<void> {
+  const { error } = await supabase.rpc('cancel_ride', { p_ride_id: rideId });
+  if (error) throw error;
+}
+
+/** A co-rider's phone. The server refuses (NOT_ALLOWED) unless you're both in and they share. */
+export async function getRiderContact(rideId: string, userId: string): Promise<string> {
+  const { data, error } = await supabase.rpc('get_rider_contact', { p_ride_id: rideId, p_user_id: userId });
   if (error) throw error;
   return data;
 }

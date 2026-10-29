@@ -20,8 +20,16 @@ const AUTH_COPY: Record<string, string> = {
 const RPC_COPY: Record<string, string> = {
   NOT_ONBOARDED: 'Finish setting up your profile first.',
   INVALID_TIME: 'Pick a time in the future, up to 90 days out.',
-  INVALID_SEATS: 'A ride has 2 to 6 seats, including you.',
+  INVALID_SEATS: 'A ride has 2 to 6 seats (including the host), and never fewer than the people in it.',
   INVALID_DETAILS: 'Check the fare, meet spot and notes, then try again.',
+  RIDE_FULL: 'This ride just filled up.',
+  RIDE_NOT_ACTIVE: 'This ride was cancelled.',
+  RIDE_DEPARTED: 'This ride has already left.',
+  RIDE_NOT_FOUND: 'This ride isn’t available any more.',
+  ALREADY_MEMBER: 'You’re already in this ride.',
+  NOT_MEMBER: 'You’re not in this ride any more.',
+  NOT_HOST: 'Only the host can do that.',
+  NOT_ALLOWED: 'Their number isn’t available.',
 };
 
 export function errorMessage(error: unknown): string {

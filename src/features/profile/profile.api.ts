@@ -32,13 +32,13 @@ const AVATAR_LINK_SECONDS = 60 * 60;
 
 export const profileKeys = {
   all: ['profile'] as const,
-  me: (userId: string) => [...profileKeys.all, 'me', userId] as const,
+  detail: (userId: string) => [...profileKeys.all, 'detail', userId] as const,
   private: (userId: string) => [...profileKeys.all, 'private', userId] as const,
   avatarUrl: (path: string) => [...profileKeys.all, 'avatar', path] as const,
   colleges: ['colleges'] as const,
 };
 
-export async function getMyProfile(userId: string): Promise<Profile> {
+export async function getProfile(userId: string): Promise<Profile> {
   const { data, error } = await supabase
     .from('profiles')
     .select('id, display_name, college_id, home_label, intent, avatar_path, onboarded_at, colleges(name)')

@@ -37,13 +37,13 @@ Use a privacy-light analytics tool (e.g., PostHog) or simple Postgres counts at 
 
 ## 15. Open questions **[DECIDE]**
 
-1. Ride timeline: 3 steps (artifact screens) or 4 (artifact README: Posted → Matched → Meet → At the airport)?
+1. ~~Ride timeline: 3 steps or 4?~~ **Decided (Phase 4):** 4 steps, Posted → Matched → Meet → At SAN / At campus (`rideTimeline`).
 2. The PDF chat had "Location / Other" tabs; the artifact dropped them. Replace with a pinned `meet_spot` on the ride (current spec) or keep tabs?
-3. Fare share: divide by current riders or by max seats?
+3. ~~Fare share: divide by current riders or by max seats?~~ **Decided (Phase 4):** current riders, rounded up to whole dollars (`fareShareDollars`).
 4. ~~Should a user be allowed in two overlapping rides (same direction, within ~2 h)?~~ **Decided (Phase 3):** allowed, but Post a ride suggests joinable rides within ±60 min ("Ride together instead?", `nearby_rides`).
 5. ~~Day separators in the rides list?~~ **Decided (Phase 3):** yes, sticky San Diego day headers (Today / Tomorrow / Tue 3/18).
 6. When someone blocks a co-rider, remove either from the shared upcoming ride, or only hide chat?
-7. Intent tag per profile only, or choosable per ride when joining?
+7. ~~Intent tag per profile only, or choosable per ride when joining?~~ **Decided (Phase 4):** chosen per ride when joining, defaulting to the profile tag (`join_ride(p_intent)`).
 8. App Review login approach (§12.3).
 9. Should "To campus" rides capture a flight number from day one to set up Phase 9 matching?
 

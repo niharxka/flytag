@@ -4,7 +4,7 @@ import {
   completeOnboarding,
   getAvatarUrl,
   getMyPrivateProfile,
-  getMyProfile,
+  getProfile,
   listColleges,
   profileKeys,
   removeAvatar,
@@ -13,14 +13,17 @@ import {
 } from './profile.api';
 import type { EditProfile, Onboarding } from './profile.schemas';
 
-/** The signed-in rider's profile. Disabled until there's a session. */
-export function useMyProfile(userId: string | undefined) {
+/** A rider's public profile (your own, or a co-rider's). Disabled until there's an id. */
+export function useProfile(userId: string | undefined) {
   return useQuery({
-    queryKey: profileKeys.me(userId ?? ''),
-    queryFn: () => getMyProfile(userId!),
+    queryKey: profileKeys.detail(userId ?? ''),
+    queryFn: () => getProfile(userId!),
     enabled: Boolean(userId),
   });
 }
+
+/** The signed-in rider's profile: same data, named for what screens mean by it. */
+export const useMyProfile = useProfile;
 
 export function useMyPrivateProfile(userId: string) {
   return useQuery({ queryKey: profileKeys.private(userId), queryFn: () => getMyPrivateProfile(userId) });
@@ -46,7 +49,7 @@ export function useCompleteOnboarding(userId: string) {
   return useMutation({
     mutationFn: (input: Onboarding) => completeOnboarding(userId, input),
     // Refetching the profile brings in onboarded_at, which opens the (app) routes.
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.me(userId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.detail(userId) }),
   });
 }
 
@@ -55,7 +58,7 @@ function useRefreshAfterProfileChange(userId: string) {
   const queryClient = useQueryClient();
   return () =>
     Promise.all([
-      queryClient.invalidateQueries({ queryKey: profileKeys.me(userId) }),
+      queryClient.invalidateQueries({ queryKey: profileKeys.detail(userId) }),
       queryClient.invalidateQueries({ queryKey: profileKeys.private(userId) }),
       queryClient.invalidateQueries({ queryKey: ['rides'] }),
     ]);

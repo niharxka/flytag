@@ -15,12 +15,25 @@ type Props = {
   userName?: string;
   userPhoto?: string;
   onProfile?: () => void;
+  /** More room above and left of the title, for tab screens whose content doesn't need to line up with it. */
+  inset?: boolean;
 };
 
 /** Screen header: eyebrow + title-xl on the left, the user's avatar (or a custom action) on the right. */
-export function AppHeader({ title, eyebrow, onBack, trailing, userName, userPhoto, onProfile }: Props) {
+export function AppHeader({
+  title,
+  eyebrow,
+  onBack,
+  trailing,
+  userName,
+  userPhoto,
+  onProfile,
+  inset = false,
+}: Props) {
   return (
-    <View className="flex-row items-end justify-between gap-space-4 px-space-4 pb-space-4 pt-space-5">
+    <View
+      className={`flex-row items-end justify-between gap-space-4 pb-space-4 ${inset ? 'px-space-5 pt-space-6' : 'px-space-4 pt-space-5'}`}
+    >
       <View className="min-w-0 flex-1 flex-row items-center gap-space-3">
         {onBack && (
           <IconButton icon="chevron-left" label="Go back" variant="glass" size="sm" onPress={onBack} />

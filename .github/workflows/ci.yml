@@ -36,3 +36,8 @@ jobs:
       - run: supabase start
       - run: supabase db reset
       - run: supabase test db
+      # The last-seat race: 10 simultaneous joins, exactly one may win (§9.6 AC).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node scripts/race-test.ts

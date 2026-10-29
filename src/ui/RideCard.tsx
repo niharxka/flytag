@@ -52,10 +52,14 @@ export function RideCard({
       </View>
       <View className="items-end gap-space-1">
         {riders.length > 0 && <AvatarStack names={riders} size={28} max={3} />}
+        {/* Closed lock = full, open lock = seats left. Always with words, never the icon alone. */}
         {full ? (
-          <Tag tone="go" icon="users" label="Full" />
+          <Tag tone="go" icon="lock" label="Full" />
         ) : (
-          <Text className={`font-400 text-[13px] leading-[16px] ${ink}`}>{seats}</Text>
+          <View className="flex-row items-center gap-space-1">
+            <Icon name="lock-open" size={14} strokeWidth={2} className={ink} />
+            <Text className={`font-400 text-[13px] leading-[16px] ${ink}`}>{seats}</Text>
+          </View>
         )}
       </View>
       <View className="opacity-70">

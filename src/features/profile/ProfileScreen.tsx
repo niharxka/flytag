@@ -31,6 +31,7 @@ export function ProfileScreen() {
         <ScrollView contentContainerClassName="pb-[140px]">
           <AppHeader
             title="Profile"
+            inset
             trailing={
               p ? <IconButton icon="pencil" label="Edit profile" variant="glass" onPress={edit} /> : null
             }

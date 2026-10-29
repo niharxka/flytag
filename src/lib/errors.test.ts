@@ -17,6 +17,9 @@ describe('errorMessage', () => {
   it('explains network failures', () => {
     expect(errorMessage(new TypeError('Network request failed'))).toMatch(/Can’t reach FlyTag/);
   });
+  it('says the last seat went to someone else', () => {
+    expect(errorMessage({ code: 'P0001', message: 'RIDE_FULL' })).toBe('This ride just filled up.');
+  });
   it('maps RPC error codes', () => {
     expect(errorMessage({ code: 'P0001', message: 'INVALID_TIME' })).toMatch(/time in the future/);
   });

@@ -4,5 +4,6 @@
 export { EditProfileForm } from './EditProfileForm';
 export { OnboardingForm } from './OnboardingForm';
 export { ProfileScreen } from './ProfileScreen';
+export { RiderProfile } from './RiderProfile';
 export { useAvatarUrl, useMyProfile } from './profile.hooks';
 export type { Profile } from './profile.api';

@@ -7,7 +7,7 @@ export default function ChatsTab() {
   return (
     <Backdrop>
       <SafeAreaView className="flex-1" edges={['top']}>
-        <AppHeader eyebrow="Your rides" title="Chats" trailing={null} />
+        <AppHeader eyebrow="Your rides" title="Chats" trailing={null} inset />
         <EmptyState
           icon="chat"
           title="No chats yet"

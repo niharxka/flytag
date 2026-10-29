@@ -257,6 +257,7 @@ export function Gallery() {
           <Section title="RiderRow">
             <RiderRow name="Jake" college="Marshall" tag={{ label: 'Networking', tone: 'sky' }} />
             <RiderRow name="Silvia" college="Revelle" tag={{ label: 'FlyPal', tone: 'deep' }} phoneShared />
+            <RiderRow name="You" college="Sixth College" showCall={false} />
           </Section>
 
           <Section title="SeatStepper">
@@ -271,6 +272,7 @@ export function Gallery() {
               steps={[
                 { label: 'Posted', state: 'done' },
                 { label: 'Matching', state: 'current' },
+                { label: 'Meet', state: 'next' },
                 { label: 'At SAN', state: 'next' },
               ]}
             />
@@ -278,7 +280,8 @@ export function Gallery() {
               steps={[
                 { label: 'Posted', state: 'done' },
                 { label: 'Matched', state: 'done' },
-                { label: 'At SAN', state: 'current' },
+                { label: 'Meet', state: 'done' },
+                { label: 'At campus', state: 'current' },
               ]}
             />
           </Section>
@@ -370,6 +373,12 @@ export function Gallery() {
                   Get started
                 </Button>
               </View>
+            </Phone>
+          </Section>
+
+          <Section title="AppHeader · inset">
+            <Phone>
+              <AppHeader eyebrow="Updates" title="Alerts" trailing={null} inset />
             </Phone>
           </Section>
 

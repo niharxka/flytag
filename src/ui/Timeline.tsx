@@ -1,7 +1,4 @@
 import { Text, View } from 'react-native';
-import Svg, { Line } from 'react-native-svg';
-
-import { useThemeColors } from '@/theme/useThemeMode';
 
 export type StepState = 'done' | 'current' | 'next';
 
@@ -15,41 +12,33 @@ const PILL: Record<StepState, string> = {
 const INK: Record<StepState, string> = { done: 'text-on-sky', current: 'text-on-inverse', next: 'text-ink' };
 const SPOKEN: Record<StepState, string> = { done: 'done', current: 'current step', next: 'not yet' };
 
-/** Ride progress as pills joined by dashed lines: done = sky, current = inverse, next = outlined. */
+/**
+ * Ride progress as a row of equal-width pills: done = sky, current = inverse, next = outlined.
+ * Equal widths keep the steps evenly spaced whatever the words are. The brand artifact joined
+ * 3 pills with dashed lines; with 4 steps on a phone those lines shrank to stray dots, so the
+ * colour sequence alone carries the progression.
+ */
 export function Timeline({ steps, label = 'Ride progress' }: Props) {
-  const c = useThemeColors();
   return (
-    <View className="flex-row items-center" accessibilityLabel={label} accessibilityRole="summary">
-      {steps.map((s, i) => {
+    <View className="flex-row gap-space-2" accessibilityLabel={label} accessibilityRole="summary">
+      {steps.map((s) => {
         const state = s.state ?? 'next';
-        const last = i === steps.length - 1;
         return (
-          <View key={s.label} className={`flex-row items-center ${last ? '' : 'flex-1'}`}>
-            <View
-              className={`h-[32px] flex-row items-center rounded-pill px-space-4 ${PILL[state]}`}
-              accessible
-              accessibilityLabel={`${s.label}, ${SPOKEN[state]}`}
+          <View
+            key={s.label}
+            className={`h-[32px] flex-1 items-center justify-center rounded-pill px-space-2 ${PILL[state]}`}
+            accessible
+            accessibilityLabel={`${s.label}, ${SPOKEN[state]}`}
+          >
+            {/* Shrinks a little instead of cutting off ("At campus", large accessibility text). */}
+            <Text
+              className={`font-700 text-[14px] leading-[20px] ${INK[state]}`}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.75}
             >
-              <Text className={`font-700 text-[14px] leading-[20px] ${INK[state]}`} numberOfLines={1}>
-                {s.label}
-              </Text>
-            </View>
-            {!last && (
-              // React Native can't dash a single border side on iOS, so the connector is drawn.
-              <View className="mx-space-2 min-w-space-4 flex-1">
-                <Svg height={2} width="100%">
-                  <Line
-                    x1="0"
-                    y1="1"
-                    x2="100%"
-                    y2="1"
-                    stroke={c.lineStrong}
-                    strokeWidth={2}
-                    strokeDasharray="4 4"
-                  />
-                </Svg>
-              </View>
-            )}
+              {s.label}
+            </Text>
           </View>
         );
       })}

@@ -32,12 +32,14 @@ jest.mock('@/features/profile', () => ({
   OnboardingForm: mockScreen('Onboarding screen'),
   ProfileScreen: mockScreen('Profile screen'),
   EditProfileForm: mockScreen('Edit profile screen'),
+  RiderProfile: mockScreen('Rider screen'),
   useAvatarUrl: () => ({ data: undefined }),
 }));
 jest.mock('@/features/rides', () => ({
   RidesScreen: mockScreen('Rides screen'),
   PostRideForm: mockScreen('Post ride screen'),
-  RideSummary: mockScreen('Ride screen'),
+  RideDetail: mockScreen('Ride screen'),
+  EditRideForm: mockScreen('Edit ride screen'),
 }));
 jest.mock('expo-font', () => ({ useFonts: () => [true, null] }));
 // Jest stubs global.css, so NativeWind never learns darkMode is 'class' and throws on a manual

@@ -149,11 +149,31 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "create_ride":
+            "cancel_ride":
+{ Args: { "p_ride_id": string }; Returns: undefined
+                           },
+"create_ride":
 { Args: { "p_client_request_id"?: string,"p_depart_at": string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_est_total_cost_cents"?: number,"p_meet_spot"?: string,"p_notes"?: string,"p_seats_max"?: number }; Returns: string
+                           },
+"get_rider_contact":
+{ Args: { "p_ride_id": string,"p_user_id": string }; Returns: string
                            },
 "hook_restrict_signup_to_ucsd":
 { Args: { "event": Json }; Returns: Json
+                           },
+"is_active_member":
+{ Args: { "p_ride_id": string,"p_user_id": string }; Returns: boolean
+                           },
+"join_ride":
+{ Args: { "p_intent"?: Database["public"]['Enums']["rider_intent"],"p_ride_id": string }; Returns: undefined
+                           },
+"leave_ride":
+{ Args: { "p_ride_id": string }; Returns: undefined
+                           },
+"list_ride_members":
+{ Args: { "p_ride_id": string }; Returns: {
+              "avatar_path": string,"display_name": string,"home": string,"intent": Database["public"]['Enums']["rider_intent"],"is_me": boolean,"joined_at": string,"phone_shared": boolean,"role": Database["public"]['Enums']["member_role"],"user_id": string
+            }[]
                            },
 "list_rides":
 { Args: { "p_after_depart_at"?: string,"p_after_id"?: string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_page_size"?: number }; Returns: {
@@ -205,6 +225,9 @@ isOneToOne: false
       } },
 "ride_past_cutoff":
 { Args: Record<PropertyKey, never>; Returns: string
+                           },
+"update_ride":
+{ Args: { "p_depart_at": string,"p_est_total_cost_cents"?: number,"p_meet_spot"?: string,"p_notes"?: string,"p_ride_id": string,"p_seats_max": number }; Returns: undefined
                            }
           }
           Enums: {

@@ -2,7 +2,7 @@
 
 > Keep this file updated in the same PR as every migration. Full column details: `docs/spec/05-database.md` §6.
 >
-> **Built so far (Phases 2–3):** `colleges`, `profiles`, `profile_private`, the signup hook, the new-user trigger, `rides`, `ride_members`, the `ride_cards` view and `create_ride` / `list_rides` / `nearby_rides`. Everything else on this page is the plan.
+> **Built so far (Phases 2–4):** `colleges`, `profiles`, `profile_private`, the signup hook, the new-user trigger, `rides`, `ride_members`, the `ride_cards` view, `create_ride` / `list_rides` / `nearby_rides`, and Phase 4's `join_ride` / `leave_ride` / `update_ride` / `cancel_ride` / `list_ride_members` / `get_rider_contact`. Everything else on this page is the plan.
 
 | Migration | Adds |
 |---|---|
@@ -15,6 +15,12 @@
 | `20261030000004_list_rides.sql` | `list_rides()` (keyset pages, past hidden) and `nearby_rides()` (merge suggestion) |
 | `20261031000001_home_label.sql` | `profiles.home_label` (custom home; a college OR a label, never both); `ride_cards.host_college` → `host_home` |
 | `20261031000002_avatars.sql` | private `avatars` Storage bucket; each user writes only `avatars/<their id>/…`; signed-in users can view |
+| `20261101000001_member_helpers.sql` | `is_active_member(ride, user)` |
+| `20261101000002_join_ride.sql` | `join_ride(ride, intent)`: **locks the ride row** so the last seat goes to exactly one person (`npm run db:race`) |
+| `20261101000003_leave_ride.sql` | `leave_ride()`: host leaving hands over to the earliest rider, or cancels an empty ride |
+| `20261101000004_host_ride_edits.sql` | `update_ride()` (seats never below people in), `cancel_ride()`; host only |
+| `20261101000005_list_ride_members.sql` | `list_ride_members()`: the riders panel, with a phone *shared?* flag, never the number |
+| `20261101000006_get_rider_contact.sql` | `get_rider_contact()`: the only way to read someone's phone (both in the ride + they share) |
 
 ## 1. The diagram
 
@@ -85,7 +91,7 @@ erDiagram
 | 1 | Niharika signs up | Supabase Auth OTP | hook checks `@ucsd.edu` → `auth.users` + trigger creates `profiles`, `profile_private` |
 | 2 | Finishes onboarding | `update profiles` | `profiles.college_id`, `intent`, `onboarded_at` |
 | 3 | Posts Tue 3/18 · 11:00 AM, 4 seats | `create_ride` | `rides` +1, `ride_members` +1 (host), `messages` +1 (system, from Phase 5) |
-| 4 | Jake joins | `join_ride` | locks ride row → `ride_members` +1, `messages` +1 (system) → trigger: `notifications` +1 for Niharika |
+| 4 | Jake joins | `join_ride` | locks ride row → `ride_members` +1 (`messages` +1 system and the `notifications` trigger arrive in Phases 5–6) |
 | 5 | Notification is sent | (automatic) | webhook → `push` function reads `push_tokens` → Expo → Niharika's phone |
 | 6 | Jake: "Meet at Sixth market?" | `insert messages` | `messages` +1 → realtime to Niharika's open chat → trigger: `notifications` (collapsed) |
 | 7 | 2 hours before | (pg_cron) | `notifications` +1 per member (`ride_reminder`) |
@@ -117,7 +123,7 @@ Each item lives in the migration named next to it. If something "magically" happ
 | colleges | you're signed in |
 | profile photos (`avatars` bucket) | you're signed in, via a signed link (no public URLs) |
 
-**Who can write what (so far):** your own `profiles` row, only `display_name`, `college_id`, `home_label`, `intent`, `avatar_path`, `onboarded_at` (column grants); files in your own `avatars/<id>/` folder; your own `profile_private` settings. Rows themselves are only created by the trigger. `colleges` changes only via migrations. `rides` / `ride_members`: no direct writes at all; only `create_ride` (and Phase 4's join/leave/update/cancel RPCs).
+**Who can write what (so far):** your own `profiles` row, only `display_name`, `college_id`, `home_label`, `intent`, `avatar_path`, `onboarded_at` (column grants); files in your own `avatars/<id>/` folder; your own `profile_private` settings. Rows themselves are only created by the trigger. `colleges` changes only via migrations. `rides` / `ride_members`: no direct writes at all; only `create_ride`, `join_ride`, `leave_ride`, `update_ride`, `cancel_ride`.
 | a ride and its members | you're signed in and haven't blocked the host |
 | a ride's messages | you're a current member of that ride |
 | someone's phone number | you're both current members of the same ride **and** they turned on sharing (via `get_rider_contact` only) |
