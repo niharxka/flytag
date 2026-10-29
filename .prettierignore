@@ -1,0 +1,8 @@
+node_modules
+.expo
+src/theme/tokens.ts
+src/theme/tailwind.tokens.js
+global.css
+src/lib/database.types.ts
+package-lock.json
+src/ui/icons.generated.ts

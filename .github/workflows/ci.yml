@@ -1,0 +1,26 @@
+# Runs the same checks you run before saying a task is done (CLAUDE.md → Workflow).
+# db:test (pgTAP) joins this file in Phase 2 once Supabase lands.
+name: CI
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # Fails if someone edited tokens.json without regenerating (or edited a generated file).
+      - name: Generated tokens and icons are up to date
+        run: |
+          npm run tokens && npm run icons
+          git diff --exit-code -- src/theme/tokens.ts src/theme/tailwind.tokens.js global.css src/ui/icons.generated.ts
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test -- --ci

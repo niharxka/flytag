@@ -10,7 +10,7 @@
 # FlyTag
 
 UCSD students share rides to and from SAN airport. React Native (Expo) app for iOS + Android, Supabase backend.
-Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and read only the files the task needs (never all of them). Database map: `docs/SCHEMA.md`. Brand tokens: `docs/design/tokens.json`.
+Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and read only the files the task needs (never all of them). Database map: `docs/SCHEMA.md`. Brand tokens: `docs/design/tokens.json`. Component anatomy, the six reference screens and the plane: `docs/design/brand-system.md` (from the Brand System artifact). Icons: `assets/icons/*.svg`.
 
 
 
@@ -26,7 +26,7 @@ Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and re
 - `npm run db:start` (supabase start) · `npm run db:reset` (reapply migrations + seed) · `npm run db:test` (pgTAP)
 - `npm run db:types` — regenerate `src/lib/database.types.ts` after ANY migration
 - `npm run tokens` — regenerate `src/theme/tokens.ts` + `global.css` from tokens.json
-- Only `start`/`android`/`ios`/`web`/`lint` exist in `package.json` today; the rest above get added as Supabase, tests, and the token pipeline land (see `docs/spec/09-roadmap.md`) — don't assume they run before then.
+- Today `package.json` has `start`, `lint`, `typecheck`, `test`, `tokens`, `icons` (assets/icons → `src/ui/icons.generated.ts`), `format`. The `db:*` scripts arrive with Supabase in Phase 2 — don't assume they run before then. Until Phase 6 use `npx expo start` (Expo Go), not `--dev-client`.
 
 ## Architecture rules
 - `src/app/` is routes only: compose feature components, read params, nothing else. Keep files short.
