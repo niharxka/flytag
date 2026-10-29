@@ -7,8 +7,8 @@ insert into auth.users (id, email) values
   ('bbbbbbbb-0000-4000-8000-000000000002', 'ben@ucsd.edu'),
   ('cccccccc-0000-4000-8000-000000000003', 'cat@ucsd.edu'),
   ('eeeeeeee-0000-4000-8000-000000000005', 'new@ucsd.edu');
-update public.profiles set college_id = (select id from public.colleges where sort = 1), onboarded_at = now()
-  where id <> 'eeeeeeee-0000-4000-8000-000000000005';
+update public.profiles set college_id = (select id from public.colleges where sort = 1), home_label = null, onboarded_at = now()
+  where id in ('aaaaaaaa-0000-4000-8000-000000000001', 'bbbbbbbb-0000-4000-8000-000000000002', 'cccccccc-0000-4000-8000-000000000003');
 
 -- A 2-seat ride (host takes one), a cancelled one, a departed one.
 insert into public.rides (id, created_by, direction, depart_at, seats_max, status) values

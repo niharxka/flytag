@@ -30,6 +30,7 @@ const RPC_COPY: Record<string, string> = {
   NOT_MEMBER: 'You’re not in this ride any more.',
   NOT_HOST: 'Only the host can do that.',
   NOT_ALLOWED: 'Their number isn’t available.',
+  RATE_LIMITED: 'You’re sending messages too fast. Wait a moment.',
 };
 
 export function errorMessage(error: unknown): string {

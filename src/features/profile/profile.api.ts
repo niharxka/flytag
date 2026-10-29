@@ -20,7 +20,12 @@ export type Profile = {
 };
 
 /** The signed-in rider's private details, for the edit screen. */
-export type PrivateProfile = { phone: string | null; sharePhone: boolean };
+export type PrivateProfile = {
+  phone: string | null;
+  sharePhone: boolean;
+  /** Custom home areas this rider has added, oldest first. Only the chosen one is public. */
+  savedAreas: string[];
+};
 
 export type College = { id: string; name: string };
 
@@ -60,11 +65,11 @@ export async function getProfile(userId: string): Promise<Profile> {
 export async function getMyPrivateProfile(userId: string): Promise<PrivateProfile> {
   const { data, error } = await supabase
     .from('profile_private')
-    .select('phone_e164, share_phone')
+    .select('phone_e164, share_phone, saved_home_labels')
     .eq('user_id', userId)
     .single();
   if (error) throw error;
-  return { phone: data.phone_e164, sharePhone: data.share_phone };
+  return { phone: data.phone_e164, sharePhone: data.share_phone, savedAreas: data.saved_home_labels };
 }
 
 export async function listColleges(): Promise<College[]> {
@@ -76,10 +81,17 @@ export async function listColleges(): Promise<College[]> {
 // Private row first, public row second, for both onboarding and editing. Two single-row,
 // owner-only updates rather than an RPC (spec §3 rule 2): no rule spans the two rows and both
 // are safe to repeat. .select().single() on the second turns "RLS matched no row" into an error.
-async function savePrivate(userId: string, input: { phone?: string; sharePhone: boolean }) {
+async function savePrivate(
+  userId: string,
+  input: { phone?: string; sharePhone: boolean; savedAreas: string[] },
+) {
   const { error } = await supabase
     .from('profile_private')
-    .update({ phone_e164: input.phone ?? null, share_phone: input.sharePhone })
+    .update({
+      phone_e164: input.phone ?? null,
+      share_phone: input.sharePhone,
+      saved_home_labels: input.savedAreas,
+    })
     .eq('user_id', userId);
   if (error) throw error;
 }

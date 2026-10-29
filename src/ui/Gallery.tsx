@@ -13,6 +13,7 @@ import {
   Button,
   ChatBubble,
   ChatComposer,
+  ChatSystemLine,
   CodeField,
   ContentCard,
   DateTimeField,
@@ -293,7 +294,11 @@ export function Gallery() {
                 time="8:23 AM"
                 text="Let’s meet at the Sixth market, it’s central."
               />
-              <ChatBubble mine time="8:25 AM" text="Works for me. See you at 10:40." />
+              <ChatSystemLine text="Jake joined" time="8:24 AM" />
+              <ChatBubble mine time="8:25 AM" text="Works for me." showByline={false} />
+              <ChatBubble mine time="8:25 AM" text="See you at 10:40." />
+              <ChatBubble mine text="Is the Uber XL booked?" status="sending" />
+              <ChatBubble mine text="I can bring snacks" status="failed" onRetry={() => {}} />
               <ChatComposer value={message} onChangeText={setMessage} onSend={() => setMessage('')} />
             </View>
           </Section>
@@ -308,6 +313,16 @@ export function Gallery() {
                 { label: 'Home college', meta: 'Sixth', chevron: true },
                 { label: 'Notifications', meta: 'On', chevron: true },
                 { label: 'Safety & reporting', chevron: true },
+              ]}
+            />
+            <Menu
+              label="Home"
+              active={1}
+              items={[
+                { label: 'Sixth' },
+                { label: 'Pacific Beach', onRemove: () => {} },
+                { label: 'Del Mar', onRemove: () => {} },
+                { label: 'Somewhere else' },
               ]}
             />
           </Section>

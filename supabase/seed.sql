@@ -58,3 +58,9 @@ select r.id, r.created_by, 'host', p.intent from r join public.profiles p on p.i
 insert into public.ride_members (ride_id, user_id, role, intent, joined_at) values
   ('a0000000-0000-4000-8000-000000000001', '22222222-2222-4222-8222-222222222222', 'rider', 'networking', now()),
   ('a0000000-0000-4000-8000-000000000003', '11111111-1111-4111-8111-111111111111', 'rider', 'flypal', now());
+
+-- Demo chat in Niharika's 11:00 ride (the triggers above already wrote its system lines).
+insert into public.messages (ride_id, author_id, body, created_at) values
+  ('a0000000-0000-4000-8000-000000000001', '11111111-1111-4111-8111-111111111111', 'Hey! Let’s meet at the Sixth market, it’s pretty central.', clock_timestamp()),
+  ('a0000000-0000-4000-8000-000000000001', '22222222-2222-4222-8222-222222222222', 'Works for me. I’ll be there 10 min early.', clock_timestamp() + interval '1 minute'),
+  ('a0000000-0000-4000-8000-000000000001', '11111111-1111-4111-8111-111111111111', 'Perfect, I’ll book the Uber XL.', clock_timestamp() + interval '2 minutes');

@@ -258,6 +258,16 @@ export const icons = {
       "type": "path",
       "d": "M17.5 14.6c1.8.6 3 2.1 3.5 4.4"
     }
+  ],
+  "x": [
+    {
+      "type": "path",
+      "d": "M6.5 6.5l11 11"
+    },
+    {
+      "type": "path",
+      "d": "M17.5 6.5l-11 11"
+    }
   ]
 } as const;
 

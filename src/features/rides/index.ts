@@ -5,3 +5,5 @@ export { EditRideForm } from './EditRideForm';
 export { PostRideForm } from './PostRideForm';
 export { RideDetail } from './RideDetail';
 export { RidesScreen } from './RidesScreen';
+// Used by the chat feature (chat depends on rides, never the reverse).
+export { useRide, useRideMembers } from './rides.hooks';

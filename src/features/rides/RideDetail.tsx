@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -36,8 +36,13 @@ function Detail({ label, value, sub }: { label: string; value: string; sub?: str
   );
 }
 
-/** Screen 05 (§9.6): timeline, riders, details, and Join / Leave / host actions. */
-export function RideDetail({ rideId }: { rideId: string }) {
+type ChatSlot = (ride: Ride) => ReactNode;
+
+/**
+ * Screen 05 (§9.6). `renderChat` is the chat panel, passed in by the route so rides doesn't
+ * import the chat feature (chat already depends on rides).
+ */
+export function RideDetail({ rideId, renderChat }: { rideId: string; renderChat?: ChatSlot }) {
   const c = useThemeColors();
   const ride = useRide(rideId);
   const back = () => (router.canGoBack() ? router.back() : router.replace('/'));
@@ -59,10 +64,10 @@ export function RideDetail({ rideId }: { rideId: string }) {
       </Backdrop>
     );
   }
-  return <Loaded ride={ride.data} back={back} />;
+  return <Loaded ride={ride.data} back={back} renderChat={renderChat} />;
 }
 
-function Loaded({ ride: r, back }: { ride: Ride; back: () => void }) {
+function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; renderChat?: ChatSlot }) {
   const { session } = useSession();
   const me = useMyProfile(session?.user.id);
   const join = useJoinRide(r.id);
@@ -201,14 +206,7 @@ function Loaded({ ride: r, back }: { ride: Ride; back: () => void }) {
               </View>
             )}
 
-            <GlassView className="gap-space-2 rounded-lg p-space-5">
-              <Text className="type-label text-ink-muted" accessibilityRole="header">
-                Chat
-              </Text>
-              <Text className="type-body-sm text-ink-muted">
-                {r.isMember ? 'Ride chat arrives in the next update.' : 'Join to chat with riders.'}
-              </Text>
-            </GlassView>
+            {renderChat?.(r)}
           </View>
         </ScrollView>
       </SafeAreaView>

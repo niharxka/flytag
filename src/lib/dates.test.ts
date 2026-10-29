@@ -1,5 +1,6 @@
 import {
   defaultDepartAt,
+  formatChatTime,
   formatDayHeader,
   formatRideDate,
   formatRideDateTime,
@@ -49,5 +50,12 @@ describe('dates (San Diego time)', () => {
 
   it('defaults to the next :00 or :30 at least an hour away', () => {
     expect(defaultDepartAt(new Date('2026-03-18T18:10:00Z')).toISOString()).toBe('2026-03-18T19:30:00.000Z');
+  });
+
+  it('labels chat times by San Diego day', () => {
+    const now = new Date('2026-03-18T20:00:00Z'); // 1 PM 3/18
+    expect(formatChatTime('2026-03-18T18:02:00Z', now)).toBe('11:02 AM');
+    expect(formatChatTime('2026-03-17T18:00:00Z', now)).toBe('Yesterday');
+    expect(formatChatTime('2026-03-14T18:00:00Z', now)).toBe('Sat 3/14');
   });
 });

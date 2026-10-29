@@ -18,6 +18,7 @@ export default function AppLayout() {
       <Stack.Screen name="rides/new" options={SHEET} />
       <Stack.Screen name="rides/[rideId]/index" />
       <Stack.Screen name="rides/[rideId]/edit" options={SHEET} />
+      <Stack.Screen name="rides/[rideId]/chat" />
       <Stack.Screen name="riders/[userId]" />
       <Stack.Screen name="settings/edit-profile" />
     </Stack>

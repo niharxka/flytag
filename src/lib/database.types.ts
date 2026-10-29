@@ -37,16 +37,48 @@ export type Database = {
                   Relationships: [
                     
                   ]
-                },"profile_private": {
+                },"messages": {
                   Row: {
-                    "notify_new_message": boolean,"notify_ride_reminder": boolean,"notify_ride_updated": boolean,"notify_rider_joined": boolean,"phone_e164": string | null,"share_phone": boolean,"theme_pref": string,"user_id": string
+                    "author_id": string | null,"body": string,"created_at": string,"id": string,"kind": Database["public"]['Enums']["message_kind"],"ride_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"share_phone"?: boolean,"theme_pref"?: string,"user_id": string
+                    "author_id"?: string | null,"body": string,"created_at"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["message_kind"],"ride_id": string
                   }
                   Update: {
-                    "notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"share_phone"?: boolean,"theme_pref"?: string,"user_id"?: string
+                    "author_id"?: string | null,"body"?: string,"created_at"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["message_kind"],"ride_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "messages_author_id_fkey"
+      columns: ["author_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "messages_ride_id_fkey"
+      columns: ["ride_id"]
+isOneToOne: false
+      referencedRelation: "ride_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "messages_ride_id_fkey"
+      columns: ["ride_id"]
+isOneToOne: false
+      referencedRelation: "rides"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"profile_private": {
+                  Row: {
+                    "notify_new_message": boolean,"notify_ride_reminder": boolean,"notify_ride_updated": boolean,"notify_rider_joined": boolean,"phone_e164": string | null,"saved_home_labels": (string)[],"share_phone": boolean,"theme_pref": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"saved_home_labels"?: (string)[],"share_phone"?: boolean,"theme_pref"?: string,"user_id": string
+                  }
+                  Update: {
+                    "notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"saved_home_labels"?: (string)[],"share_phone"?: boolean,"theme_pref"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -158,6 +190,9 @@ isOneToOne: false
 "get_rider_contact":
 { Args: { "p_ride_id": string,"p_user_id": string }; Returns: string
                            },
+"home_labels_valid":
+{ Args: { "labels": (string)[] }; Returns: boolean
+                           },
 "hook_restrict_signup_to_ucsd":
 { Args: { "event": Json }; Returns: Json
                            },
@@ -199,6 +234,11 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"my_chats":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"host_name": string,"last_at": string,"last_author_name": string,"last_body": string,"last_is_mine": boolean,"last_kind": Database["public"]['Enums']["message_kind"],"ride_id": string,"rider_names": (string)[],"seats_max": number,"seats_taken": number
+            }[]
+                           },
 "nearby_rides":
 { Args: { "p_depart_at": string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_window_minutes"?: number }; Returns: {
               "depart_at": string,
@@ -223,6 +263,9 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"post_system_message":
+{ Args: { "p_body": string,"p_ride_id": string }; Returns: undefined
+                           },
 "ride_past_cutoff":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
@@ -231,7 +274,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "member_role": "host"|"rider","ride_direction": "to_airport"|"to_campus","ride_status": "active"|"cancelled","rider_intent": "networking"|"flypal"
+            "member_role": "host"|"rider","message_kind": "text"|"system","ride_direction": "to_airport"|"to_campus","ride_status": "active"|"cancelled","rider_intent": "networking"|"flypal"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -351,7 +394,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "member_role": ["host", "rider"],"ride_direction": ["to_airport", "to_campus"],"ride_status": ["active", "cancelled"],"rider_intent": ["networking", "flypal"]
+            "member_role": ["host", "rider"],"message_kind": ["text", "system"],"ride_direction": ["to_airport", "to_campus"],"ride_status": ["active", "cancelled"],"rider_intent": ["networking", "flypal"]
           }
         }
 } as const

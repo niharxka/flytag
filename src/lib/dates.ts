@@ -62,3 +62,14 @@ export function defaultDepartAt(now: Date = new Date()): Date {
   const halfHour = 30 * 60 * 1000;
   return new Date(Math.ceil((now.getTime() + 60 * 60 * 1000) / halfHour) * halfHour);
 }
+
+/** Chats tab: "11:02 AM" today, "Yesterday", else "Tue 3/18" (San Diego days). */
+export function formatChatTime(d: DateInput, now: Date = new Date()): string {
+  const key = rideDayKey(d);
+  const today = rideDayKey(now);
+  if (key === today) return formatRideTime(d);
+  // Noon yesterday is always yesterday, whatever daylight saving does.
+  const yesterday = rideDayKey(fromZonedTime(`${today}T12:00:00`, RIDE_TZ).getTime() - 24 * 60 * 60 * 1000);
+  if (key === yesterday) return 'Yesterday';
+  return formatRideDate(d);
+}

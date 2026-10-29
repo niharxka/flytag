@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useController, useForm } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -16,8 +16,19 @@ export function OnboardingForm({ userId }: { userId: string }) {
   const complete = useCompleteOnboarding(userId);
   const { control, handleSubmit, formState } = useForm<OnboardingInput, unknown, Onboarding>({
     resolver: zodResolver(onboardingSchema),
-    defaultValues: { homeChoice: '', homeLabel: '', intent: 'none', phone: '', sharePhone: false },
+    defaultValues: {
+      homeChoice: '',
+      homeLabel: '',
+      savedAreas: [],
+      intent: 'none',
+      phone: '',
+      sharePhone: false,
+    },
   });
+  // The Home picker edits three form values at once, so it takes them as plain props.
+  const { field: homeChoice } = useController({ control, name: 'homeChoice' });
+  const { field: homeLabel } = useController({ control, name: 'homeLabel' });
+  const { field: savedAreas } = useController({ control, name: 'savedAreas' });
   const onSubmit = handleSubmit((values) => complete.mutate(values));
 
   return (
@@ -34,25 +45,15 @@ export function OnboardingForm({ userId }: { userId: string }) {
 
           <View className="gap-space-2">
             <Text className="type-label text-ink-muted">Home</Text>
-            <Controller
-              control={control}
-              name="homeChoice"
-              render={({ field: choice }) => (
-                <Controller
-                  control={control}
-                  name="homeLabel"
-                  render={({ field: label }) => (
-                    <HomeLocationField
-                      choice={choice.value}
-                      onChoiceChange={choice.onChange}
-                      label={label.value}
-                      onLabelChange={label.onChange}
-                      choiceError={formState.errors.homeChoice?.message}
-                      labelError={formState.errors.homeLabel?.message}
-                    />
-                  )}
-                />
-              )}
+            <HomeLocationField
+              choice={homeChoice.value}
+              onChoiceChange={homeChoice.onChange}
+              label={homeLabel.value}
+              onLabelChange={homeLabel.onChange}
+              areas={savedAreas.value}
+              onAreasChange={savedAreas.onChange}
+              choiceError={formState.errors.homeChoice?.message}
+              labelError={formState.errors.homeLabel?.message}
             />
           </View>
 

@@ -5,13 +5,19 @@ import { Icon } from './Icon';
 import { PressableScale } from './PressableScale';
 
 type Props = {
-  /** chevron: a trailing > that tells people the row opens something (e.g. the editor). */
-  items: { label: string; meta?: string; chevron?: boolean }[];
+  /**
+   * chevron: a trailing > that tells people the row opens something (e.g. the editor).
+   * onRemove: a trailing × that deletes the row (e.g. a saved area); its label is "Remove <label>".
+   */
+  items: { label: string; meta?: string; chevron?: boolean; onRemove?: () => void }[];
   /** Index of the highlighted row, if any. */
   active?: number;
   onSelect?: (index: number) => void;
   label: string;
 };
+
+// The × is 18 pt; this slop grows its touch area to the 48 pt minimum.
+const REMOVE_SLOP = { top: 15, bottom: 15, left: 15, right: 15 };
 
 /** Numbered glass menu (01, 02 …) from the deck's agenda, used for Profile settings. */
 export function Menu({ items, active, onSelect, label }: Props) {
@@ -22,7 +28,8 @@ export function Menu({ items, active, onSelect, label }: Props) {
         const n = String(i + 1).padStart(2, '0');
         return (
           <PressableScale
-            key={it.label}
+            // Index too: a custom label can match another row's (an area called "Sixth").
+            key={`${i}-${it.label}`}
             onPress={() => onSelect?.(i)}
             accessibilityRole="menuitem"
             accessibilityLabel={it.meta ? `${it.label}, ${it.meta}` : it.label}
@@ -44,6 +51,21 @@ export function Menu({ items, active, onSelect, label }: Props) {
                 <Text className={`font-400 text-[14px] opacity-80 ${on ? 'text-on-inverse' : 'text-ink'}`}>
                   {it.meta}
                 </Text>
+              )}
+              {it.onRemove && (
+                <PressableScale
+                  onPress={it.onRemove}
+                  hitSlop={REMOVE_SLOP}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Remove ${it.label}`}
+                >
+                  <Icon
+                    name="x"
+                    size={18}
+                    strokeWidth={2}
+                    className={on ? 'text-on-inverse' : 'text-ink-muted'}
+                  />
+                </PressableScale>
               )}
               {it.chevron && (
                 <Icon

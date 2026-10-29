@@ -1,6 +1,13 @@
-import { CUSTOM_HOME, editProfileSchema, onboardingSchema } from './profile.schemas';
+import { CUSTOM_HOME, editProfileSchema, MAX_SAVED_AREAS, onboardingSchema } from './profile.schemas';
 
-const base = { homeChoice: 'c1', homeLabel: '', intent: 'none' as const, phone: '', sharePhone: false };
+const base = {
+  homeChoice: 'c1',
+  homeLabel: '',
+  savedAreas: [] as string[],
+  intent: 'none' as const,
+  phone: '',
+  sharePhone: false,
+};
 
 describe('onboardingSchema', () => {
   it('needs a home', () => {
@@ -22,6 +29,36 @@ describe('onboardingSchema', () => {
       collegeId: null,
       homeLabel: 'Pacific Beach',
     });
+  });
+  it('a typed area that was never added joins the saved list', () => {
+    expect(
+      onboardingSchema.parse({
+        ...base,
+        homeChoice: CUSTOM_HOME,
+        homeLabel: 'Del Mar',
+        savedAreas: ['Pacific Beach'],
+      }),
+    ).toMatchObject({ homeLabel: 'Del Mar', savedAreas: ['Pacific Beach', 'Del Mar'] });
+  });
+  it("a saved area keeps its saved spelling and isn't duplicated", () => {
+    expect(
+      onboardingSchema.parse({
+        ...base,
+        homeChoice: CUSTOM_HOME,
+        homeLabel: 'del mar',
+        savedAreas: ['Del Mar'],
+      }),
+    ).toMatchObject({ homeLabel: 'Del Mar', savedAreas: ['Del Mar'] });
+  });
+  it("won't keep more than the maximum areas", () => {
+    const full = Array.from({ length: MAX_SAVED_AREAS }, (_, i) => `Area ${i}`);
+    const r = onboardingSchema.safeParse({
+      ...base,
+      homeChoice: CUSTOM_HOME,
+      homeLabel: 'One more',
+      savedAreas: full,
+    });
+    expect(r.error?.issues[0].message).toMatch(/Remove one first/);
   });
   it('treats a blank phone as none', () => {
     expect(onboardingSchema.parse(base).phone).toBeUndefined();

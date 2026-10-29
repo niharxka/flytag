@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useController, useForm } from 'react-hook-form';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -19,7 +19,13 @@ import {
   useUpdateProfile,
   useUploadAvatar,
 } from './profile.hooks';
-import { CUSTOM_HOME, editProfileSchema, type EditProfile, type EditProfileInput } from './profile.schemas';
+import {
+  CUSTOM_HOME,
+  editProfileSchema,
+  sameArea,
+  type EditProfile,
+  type EditProfileInput,
+} from './profile.schemas';
 import { IntentField, PhoneFields } from './ProfileFields';
 
 /** Edit profile (§9.9): photo, name, home, tag and phone. Loads your details first. */
@@ -45,6 +51,10 @@ export function EditProfileForm({ userId }: { userId: string }) {
   );
 }
 
+// Riders who picked a custom home before areas were saved have it only in profiles.home_label.
+const withCurrentArea = (areas: string[], current: string | null) =>
+  current && !areas.some((a) => sameArea(a, current)) ? [...areas, current] : areas;
+
 function Form({ userId, profile, priv }: { userId: string; profile: Profile; priv: PrivateProfile }) {
   const save = useUpdateProfile(userId);
   const upload = useUploadAvatar(userId);
@@ -57,11 +67,16 @@ function Form({ userId, profile, priv }: { userId: string; profile: Profile; pri
       displayName: profile.displayName,
       homeChoice: profile.collegeId ?? (profile.homeLabel ? CUSTOM_HOME : ''),
       homeLabel: profile.homeLabel ?? '',
+      savedAreas: withCurrentArea(priv.savedAreas, profile.homeLabel),
       intent: profile.intent ?? 'none',
       phone: priv.phone ?? '',
       sharePhone: priv.sharePhone,
     },
   });
+  // The Home picker edits three form values at once, so it takes them as plain props.
+  const { field: homeChoice } = useController({ control, name: 'homeChoice' });
+  const { field: homeLabel } = useController({ control, name: 'homeLabel' });
+  const { field: savedAreas } = useController({ control, name: 'savedAreas' });
   const onSubmit = handleSubmit((values) => save.mutate(values, { onSuccess: () => router.back() }));
 
   // The system photo picker needs no permission prompt on iOS 14+ / Android 13+: the rider only
@@ -143,25 +158,15 @@ function Form({ userId, profile, priv }: { userId: string; profile: Profile; pri
 
           <View className="gap-space-2">
             <Text className="type-label text-ink-muted">Home</Text>
-            <Controller
-              control={control}
-              name="homeChoice"
-              render={({ field: choice }) => (
-                <Controller
-                  control={control}
-                  name="homeLabel"
-                  render={({ field: label }) => (
-                    <HomeLocationField
-                      choice={choice.value}
-                      onChoiceChange={choice.onChange}
-                      label={label.value}
-                      onLabelChange={label.onChange}
-                      choiceError={formState.errors.homeChoice?.message}
-                      labelError={formState.errors.homeLabel?.message}
-                    />
-                  )}
-                />
-              )}
+            <HomeLocationField
+              choice={homeChoice.value}
+              onChoiceChange={homeChoice.onChange}
+              label={homeLabel.value}
+              onLabelChange={homeLabel.onChange}
+              areas={savedAreas.value}
+              onAreasChange={savedAreas.onChange}
+              choiceError={formState.errors.homeChoice?.message}
+              labelError={formState.errors.homeLabel?.message}
             />
           </View>
 

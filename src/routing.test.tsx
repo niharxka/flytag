@@ -41,6 +41,11 @@ jest.mock('@/features/rides', () => ({
   RideDetail: mockScreen('Ride screen'),
   EditRideForm: mockScreen('Edit ride screen'),
 }));
+jest.mock('@/features/chat', () => ({
+  ChatScreen: mockScreen('Chat screen'),
+  ChatPreview: mockScreen('Chat preview'),
+  ChatsScreen: mockScreen('Chats screen'),
+}));
 jest.mock('expo-font', () => ({ useFonts: () => [true, null] }));
 // Jest stubs global.css, so NativeWind never learns darkMode is 'class' and throws on a manual
 // scheme change. Theme switching isn't what these tests are about; skip applying it.

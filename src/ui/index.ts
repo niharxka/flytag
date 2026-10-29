@@ -8,6 +8,7 @@ export { Backdrop } from './Backdrop';
 export { Button } from './Button';
 export { ChatBubble } from './ChatBubble';
 export { ChatComposer } from './ChatComposer';
+export { ChatSystemLine } from './ChatSystemLine';
 export { CodeField } from './CodeField';
 export { ContentCard } from './ContentCard';
 export { DateTimeField } from './DateTimeField';
