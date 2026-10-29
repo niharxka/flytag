@@ -43,7 +43,8 @@ export function Backdrop({ tone = 'mist', className = '', children, ...rest }: P
 
   return (
     <View {...rest} className={`flex-1 ${className}`} style={{ backgroundColor: base }}>
-      <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+      {/* Explicit size: on the web an unsized SVG is 300×150, not the full screen. */}
+      <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" pointerEvents="none">
         <Defs>
           {blobs.map((b, i) => (
             <RadialGradient key={i} id={`haze${i}`} cx={b.x} cy={b.y} rx={b.rx} ry={b.ry} fx={b.x} fy={b.y}>

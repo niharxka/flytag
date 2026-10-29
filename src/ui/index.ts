@@ -28,3 +28,4 @@ export { Tag, type TagTone } from './Tag';
 export { TAB_BAR_HEIGHT, TabBar, type TabItem } from './TabBar';
 export { TextField } from './TextField';
 export { Timeline, type StepState } from './Timeline';
+export { WebFrame } from './WebFrame';

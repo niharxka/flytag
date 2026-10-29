@@ -35,38 +35,38 @@
   --danger: #b3261e;
 }
 
-/* Charcoal (dark). NativeWind's colorScheme.set() drives this media query on native. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --mist: #232528;
-    --mist-deep: #1a1c1e;
-    --surface: #424242;
-    --glass: rgba(66,66,66,0.62);
-    --glass-edge: rgba(255,255,255,0.14);
-    --glass-on-sky: rgba(255,255,255,0.16);
-    --ink: #f4f6f8;
-    --ink-muted: #b9c0c7;
-    --charcoal: #424242;
-    --on-charcoal: #f4f6f8;
-    --inverse: #f4f6f8;
-    --on-inverse: #232528;
-    --sky: #a2cffd;
-    --sky-soft: #2c3a4a;
-    --sky-glow: #d4e9ff;
-    --sky-deep: #a2cffd;
-    --on-sky: #1f2a36;
-    --atmos: #6e9fbe;
-    --atmos-deep: #2f5a77;
-    --on-atmos: #ffffff;
-    --flare: #d23440;
-    --flare-deep: #9b1f2c;
-    --plane-shade: #b6c7d8;
-    --line: #4a4d52;
-    --line-strong: #8a9199;
-    --focus: #a2cffd;
-    --go: #9fd8b6;
-    --danger: #ffb4ab;
-  }
+/* Charcoal (dark), under the dark class (tailwind darkMode: 'class'). Phones: NativeWind turns
+   this into each variable's dark value and switches with the phone's appearance. Web: the
+   class sits on <html>, added or removed when the theme changes. */
+.dark:root {
+  --mist: #232528;
+  --mist-deep: #1a1c1e;
+  --surface: #424242;
+  --glass: rgba(66,66,66,0.62);
+  --glass-edge: rgba(255,255,255,0.14);
+  --glass-on-sky: rgba(255,255,255,0.16);
+  --ink: #f4f6f8;
+  --ink-muted: #b9c0c7;
+  --charcoal: #424242;
+  --on-charcoal: #f4f6f8;
+  --inverse: #f4f6f8;
+  --on-inverse: #232528;
+  --sky: #a2cffd;
+  --sky-soft: #2c3a4a;
+  --sky-glow: #d4e9ff;
+  --sky-deep: #a2cffd;
+  --on-sky: #1f2a36;
+  --atmos: #6e9fbe;
+  --atmos-deep: #2f5a77;
+  --on-atmos: #ffffff;
+  --flare: #d23440;
+  --flare-deep: #9b1f2c;
+  --plane-shade: #b6c7d8;
+  --line: #4a4d52;
+  --line-strong: #8a9199;
+  --focus: #a2cffd;
+  --go: #9fd8b6;
+  --danger: #ffb4ab;
 }
 
 /* Type styles: one class per token, e.g. className="type-heading text-ink". */

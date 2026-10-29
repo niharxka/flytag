@@ -15,3 +15,9 @@ so the media query gives us "follow the phone" and a manual toggle with one mech
 **Consequences.** Opacity modifiers like `bg-sky/50` don't work on these colours (they're full
 values, some already rgba). Use the token that exists (`sky-soft`, `glass`) instead. Type styles
 are generated CSS classes (`type-heading`), because each weight is a separate font family.
+
+**Update (web build, 2026-10-29).** Charcoal now lives under `.dark:root` with
+`darkMode: 'class'`, not the dark media query: in the browser NativeWind can only switch theme
+by toggling a `dark` class on `<html>`. On phones nothing changed: the compiled iOS bundle has
+the same 21 light/dark variable pairs before and after. On the web, "follow system" is resolved
+by `useApplyThemePref` from the browser's `prefers-color-scheme`.

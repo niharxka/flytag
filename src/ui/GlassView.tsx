@@ -50,7 +50,8 @@ export function GlassView({
       className={`overflow-hidden border ${className}`}
       style={[{ borderColor: edge }, shadow && !onSky && shadowStyle, style]}
     >
-      {Platform.OS === 'ios' && (
+      {/* iOS: native blur. Web: expo-blur uses the browser's backdrop-filter. */}
+      {(Platform.OS === 'ios' || Platform.OS === 'web') && (
         <BlurView
           intensity={intensity(strength === 'soft' ? blur.glassBlurSoft : blur.glassBlur)}
           tint={onSky ? 'dark' : theme}

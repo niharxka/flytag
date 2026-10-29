@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useSession } from '@/features/auth';
 import { useMyProfile } from '@/features/profile';
+import { confirmAction } from '@/lib/confirm';
 import { formatRideDate, formatRideTime } from '@/lib/dates';
 import { errorMessage } from '@/lib/errors';
 import { useThemeColors } from '@/theme/useThemeMode';
@@ -89,27 +90,25 @@ function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; r
   const actionError = join.error ?? leave.error ?? cancel.error;
 
   const confirmLeave = () =>
-    Alert.alert(
-      'Leave this ride?',
-      r.isHost
+    confirmAction({
+      title: 'Leave this ride?',
+      message: r.isHost
         ? r.seatsTaken > 1
           ? 'The rider who joined first becomes the host.'
           : 'You’re the only one in it, so the ride will be cancelled.'
         : 'Your seat opens up for someone else.',
-      [
-        { text: 'Stay', style: 'cancel' },
-        { text: 'Leave ride', style: 'destructive', onPress: () => leave.mutate() },
-      ],
-    );
+      confirmLabel: 'Leave ride',
+      cancelLabel: 'Stay',
+      onConfirm: () => leave.mutate(),
+    });
   const confirmCancel = () =>
-    Alert.alert('Cancel this ride?', 'It disappears for everyone, including riders who joined.', [
-      { text: 'Keep ride', style: 'cancel' },
-      {
-        text: 'Cancel ride',
-        style: 'destructive',
-        onPress: () => cancel.mutate(undefined, { onSuccess: back }),
-      },
-    ]);
+    confirmAction({
+      title: 'Cancel this ride?',
+      message: 'It disappears for everyone, including riders who joined.',
+      confirmLabel: 'Cancel ride',
+      cancelLabel: 'Keep ride',
+      onConfirm: () => cancel.mutate(undefined, { onSuccess: back }),
+    });
 
   return (
     <Backdrop>

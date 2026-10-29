@@ -12,6 +12,7 @@ import { useMyProfile } from '@/features/profile';
 import { queryClient } from '@/lib/queryClient';
 import { fontAssets } from '@/theme/fonts';
 import { useApplyThemePref, useThemeMode } from '@/theme/useThemeMode';
+import { WebFrame } from '@/ui';
 
 // Keep the splash up until fonts, the saved session and (if signed in) the profile are known,
 // so nobody sees Welcome flash before they're sent to the tabs.
@@ -52,7 +53,7 @@ function RootStack() {
   if (!ready) return null;
 
   return (
-    <>
+    <WebFrame>
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
         {/* redirectTo matters: the app opens at "/", which only exists inside (app). Without it,
@@ -65,6 +66,6 @@ function RootStack() {
         </Stack.Protected>
         <Stack.Screen name="dev/ui" />
       </Stack>
-    </>
+    </WebFrame>
   );
 }

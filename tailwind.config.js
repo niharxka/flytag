@@ -6,6 +6,9 @@ const tokens = require('./src/theme/tailwind.tokens.js');
 module.exports = {
   content: ['./src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
+  // Class mode: the only mode NativeWind allows a manual theme switch in on the web
+  // (docs/decisions/0001-nativewind.md).
+  darkMode: 'class',
   theme: {
     colors: { transparent: 'transparent', ...tokens.colors },
     spacing: { 0: '0px', px: '1px', ...tokens.spacing },

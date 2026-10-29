@@ -1,5 +1,6 @@
 import { useColorScheme } from 'nativewind';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 
 import { useThemePref, type ThemePref } from './themePref.store';
 import { colors, shadows, type ThemeName } from './tokens';
@@ -36,7 +37,17 @@ export function useApplyThemePref() {
   const { setColorScheme } = useColorScheme();
   const pref = useThemePref((s) => s.pref);
   useEffect(() => {
-    setColorScheme(SCHEME[pref]);
+    if (Platform.OS !== 'web' || pref !== 'system') {
+      setColorScheme(SCHEME[pref]);
+      return;
+    }
+    // Web, following the system: NativeWind's class mode treats 'system' as light, so read the
+    // browser's dark-mode setting ourselves, and keep following it if it changes.
+    const query = window.matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => setColorScheme(query.matches ? 'dark' : 'light');
+    apply();
+    query.addEventListener('change', apply);
+    return () => query.removeEventListener('change', apply);
   }, [pref, setColorScheme]);
 }
 
