@@ -21,6 +21,13 @@ const intensity = (px: number) => Math.min(100, px * 2);
 // near-opaque surface instead. This is the only place that decision lives.
 const ANDROID_FILL_OPACITY = 0.92;
 
+// Web only. In CSS a positioned layer (the blur and fill here) paints ON TOP of ordinary content
+// like a text input, whatever the source order, so the glass swallowed taps on the chat box.
+// The panel gets its own layering context and the two layers sit behind its content. Phones
+// stack by order already, so they're untouched.
+const WEB_OWN_LAYERS = Platform.OS === 'web' ? { zIndex: 0 } : null;
+const WEB_BEHIND_CONTENT = Platform.OS === 'web' ? { zIndex: -1 } : null;
+
 /** Frosted panel: blur + translucent glass fill + 1 px glass-edge rim + shadow-glass. */
 export function GlassView({
   className = '',
@@ -48,17 +55,18 @@ export function GlassView({
     <View
       {...rest}
       className={`overflow-hidden border ${className}`}
-      style={[{ borderColor: edge }, shadow && !onSky && shadowStyle, style]}
+      style={[{ borderColor: edge }, shadow && !onSky && shadowStyle, WEB_OWN_LAYERS, style]}
     >
       {/* iOS: native blur. Web: expo-blur uses the browser's backdrop-filter. */}
       {(Platform.OS === 'ios' || Platform.OS === 'web') && (
         <BlurView
           intensity={intensity(strength === 'soft' ? blur.glassBlurSoft : blur.glassBlur)}
           tint={onSky ? 'dark' : theme}
-          style={StyleSheet.absoluteFill}
+          style={[StyleSheet.absoluteFill, WEB_BEHIND_CONTENT]}
+          pointerEvents="none"
         />
       )}
-      <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: fill }]} />
+      <View pointerEvents="none" style={[StyleSheet.absoluteFill, WEB_BEHIND_CONTENT, { backgroundColor: fill }]} />
       {children}
     </View>
   );
