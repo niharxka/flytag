@@ -1,5 +1,7 @@
 -- System lines: every membership and ride change shows up in the chat, in order.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(2);
 
 insert into auth.users (id, email, raw_user_meta_data) values

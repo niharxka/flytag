@@ -1,6 +1,8 @@
 -- list_ride_members + get_rider_contact: the panel shows WHETHER someone shares a phone; the
 -- number itself only reaches co-riders, and only if shared (§SCHEMA 4, §9.6 AC).
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(9);
 
 insert into auth.users (id, email, raw_user_meta_data) values

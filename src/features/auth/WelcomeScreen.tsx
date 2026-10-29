@@ -2,13 +2,22 @@ import { router } from 'expo-router';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Backdrop, Button, Plane } from '@/ui';
+import { errorMessage } from '@/lib/errors';
+import { Backdrop, Button, GoogleButton, Plane } from '@/ui';
+
+import { useSignInWithGoogle } from './auth.hooks';
+
+// Email codes need a real email service in production, so the public app signs in with Google
+// only. Development builds keep the email-code screens for the demo accounts and Mailpit.
+const EMAIL_CODES = __DEV__;
 
 /**
- * Screen 01 (§9.1): sky backdrop, the plane glides in once, then "Get started" (Sign up) or
- * "Sign in". Signed-out only: a saved session skips straight past it.
+ * Screen 01 (§9.1): sky backdrop, the plane glides in once, then "Continue with Google"
+ * (UCSD accounts; new students get an account, returning ones are signed in). Signed-out only.
  */
 export function WelcomeScreen() {
+  const google = useSignInWithGoogle();
+
   return (
     <Backdrop tone="sky">
       <SafeAreaView className="flex-1 items-center justify-center gap-space-5 px-space-5">
@@ -27,24 +36,21 @@ export function WelcomeScreen() {
         </View>
         {/* items-center shrinks children to their content; self-stretch keeps the buttons full width. */}
         <View className="gap-space-3 self-stretch">
-          <Button
-            variant="glass"
-            size="lg"
-            block
-            iconEnd="arrow-right"
-            onPress={() => router.push('/sign-up')}
-          >
-            Get started
-          </Button>
-          <Button
-            variant="glass"
-            size="lg"
-            block
-            iconEnd="arrow-right"
-            onPress={() => router.push('/sign-in')}
-          >
-            Sign in
-          </Button>
+          <GoogleButton onPress={() => google.mutate()} loading={google.isPending} />
+          <Text className="type-body-sm text-center text-on-atmos">Use your @ucsd.edu Google account.</Text>
+          {google.error && (
+            <Text
+              className="type-body-sm rounded-md bg-surface px-space-4 py-space-3 text-center text-danger"
+              accessibilityRole="alert"
+            >
+              {errorMessage(google.error)}
+            </Text>
+          )}
+          {EMAIL_CODES && (
+            <Button variant="glass" block onPress={() => router.push('/sign-in')}>
+              Use an email code (dev)
+            </Button>
+          )}
         </View>
       </SafeAreaView>
     </Backdrop>

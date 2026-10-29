@@ -1,5 +1,7 @@
 -- my_chats: my rides only, with the latest message, most recent activity first.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(4);
 
 insert into auth.users (id, email, raw_user_meta_data) values

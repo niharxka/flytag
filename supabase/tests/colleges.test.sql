@@ -1,5 +1,7 @@
 -- colleges: signed-in users read the list; nobody can change it from the API.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(4);
 
 select is((select count(*) from public.colleges), 9::bigint, 'migration inserts 9 colleges (8 + Graduate student)');

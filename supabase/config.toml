@@ -426,3 +426,24 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+# ---------------------------------------------------------------------------------------------
+# FlyTag production (hosted project). `supabase config push` applies the settings above PLUS
+# these overrides to the linked project; local `supabase start` ignores this section.
+# Only values that must differ from local dev live here.
+[remotes.production]
+project_id = "pfaixpuiyvaqvtvpecbk"
+
+[remotes.production.auth.email]
+# One code per minute per address in production (local allows 1s for fast testing). The app's
+# "Send a new code" waits 60 s anyway.
+max_frequency = "1m0s"
+
+[remotes.production.db.pooler]
+# Keep the hosted plan's own pool sizes.
+default_pool_size = 15
+max_client_conn = 200
+
+[remotes.production.storage.vector]
+# Not used by FlyTag; leave it off in production.
+enabled = false

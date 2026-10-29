@@ -1,5 +1,7 @@
 -- messages: members read and post; nobody else, even calling the API directly (§13 Phase 5 exit).
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(11);
 
 insert into auth.users (id, email, raw_user_meta_data) values

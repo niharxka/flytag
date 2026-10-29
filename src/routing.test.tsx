@@ -21,6 +21,7 @@ jest.mock('@/features/auth', () => ({
   useSession: () => ({ session: mockAuth.session, initializing: false }),
   useSignOut: () => ({ mutate: jest.fn(), isPending: false }),
   WelcomeScreen: mockScreen('Welcome screen'),
+  AuthCallback: mockScreen('Callback screen'),
   AuthForm: ({ mode }: { mode: string }) => {
     const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
     return <Text>{mode === 'sign-up' ? 'Sign up screen' : 'Sign in screen'}</Text>;

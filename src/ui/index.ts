@@ -15,6 +15,7 @@ export { DateTimeField } from './DateTimeField';
 export { EmptyState } from './EmptyState';
 export { Fab } from './Fab';
 export { GlassView } from './GlassView';
+export { GoogleButton } from './GoogleButton';
 export { Icon, type IconName } from './Icon';
 export { KeyboardScrollView } from './KeyboardScrollView';
 export { IconButton } from './IconButton';

@@ -1,12 +1,20 @@
 -- profiles: created by the signup trigger; any signed-in user can read; only the owner can
 -- edit, and only the editable columns.
 begin;
-select plan(11);
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
+select plan(12);
 
 -- Two users, created the way Auth creates them (the trigger does the rest).
 insert into auth.users (id, email, raw_user_meta_data) values
   ('aaaaaaaa-0000-4000-8000-000000000001', 'ana@ucsd.edu', '{"display_name":"  Ana  "}'),
   ('bbbbbbbb-0000-4000-8000-000000000002', 'ben@ucsd.edu', '{}');
+
+-- A Google sign-up: no display_name, just Google's full name.
+insert into auth.users (id, email, raw_user_meta_data) values
+  ('cccccccc-0000-4000-8000-000000000003', 'google@ucsd.edu', '{"full_name":"Niharika Sapre","name":"Niharika Sapre"}');
+select is((select display_name from public.profiles where id = 'cccccccc-0000-4000-8000-000000000003'),
+  'Niharika', 'a Google sign-up is named by its first name');
 
 -- The trigger
 select is((select display_name from public.profiles where id = 'aaaaaaaa-0000-4000-8000-000000000001'),

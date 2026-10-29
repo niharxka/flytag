@@ -1,5 +1,7 @@
 -- join_ride: every error code, the seat limit, rejoining, and the chosen tag (§9.6).
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(11);
 
 insert into auth.users (id, email) values

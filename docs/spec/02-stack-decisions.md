@@ -61,7 +61,8 @@ You've chosen React Native for the UI. Everything below is chosen to (a) keep a 
 
 ### 2.5 Auth method
 
-- **Email OTP (6-digit code), chosen.** Codes are typed into the app, so there are no deep-link edge cases (opening the link on a laptop, mail apps' in-app browsers).
+- **Update (2026-10-29): production uses Sign in with Google, UCSD accounts only; email codes are dev-only.** See `docs/decisions/0006-google-sign-in.md`.
+- **Email OTP (6-digit code), originally chosen.** Codes are typed into the app, so there are no deep-link edge cases (opening the link on a laptop, mail apps' in-app browsers).
 - Magic links: avoid in v1 for those reasons.
 - UCSD SSO (SAML via the university): best trust signal, but needs university IT approval and a paid Supabase plan **[VERIFY]**. Post-v1.
 - Domain restriction is enforced **server-side** with Supabase's `before-user-created` auth hook (a Postgres function checking `@ucsd.edu`), plus a client-side check for a friendly error.

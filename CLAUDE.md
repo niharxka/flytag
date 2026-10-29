@@ -17,7 +17,7 @@ Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and re
 ## Stack
 - Expo (dev builds from Phase 6 on; Expo Go until then — see Current constraints), Expo Router, TypeScript strict, NativeWind, Reanimated
 - TanStack Query (server state), Zustand (UI state only), react-hook-form + zod, date-fns-tz
-- Supabase: Postgres + RLS, Auth (email OTP, @ucsd.edu only), Realtime, Storage, Edge Functions (Deno), pg_cron
+- Supabase: Postgres + RLS, Auth (Google sign-in for UCSD accounts; email OTP in dev only; @ucsd.edu enforced by a hook), Realtime, Storage, Edge Functions (Deno), pg_cron
 - Push: expo-notifications → Expo Push API from the `push` Edge Function
 
 ## Commands

@@ -1,5 +1,7 @@
 -- rides + ride_members: signed-in users read; nobody writes except through RPCs.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(6);
 
 insert into auth.users (id, email) values ('aaaaaaaa-0000-4000-8000-000000000001', 'ana@ucsd.edu');

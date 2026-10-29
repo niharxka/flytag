@@ -1,5 +1,7 @@
 -- saved_home_labels: owner can save their list; nobody else can read or change it; limits hold.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(6);
 
 insert into auth.users (id, email) values

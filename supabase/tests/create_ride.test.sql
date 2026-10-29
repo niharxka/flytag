@@ -1,5 +1,7 @@
 -- create_ride: validation (§9.5 AC "can't post a time in the past"), host membership, idempotency.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(12);
 
 insert into auth.users (id, email) values

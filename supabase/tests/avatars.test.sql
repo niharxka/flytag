@@ -1,5 +1,7 @@
 -- avatars bucket: private; signed-in users can view; you can only write your own folder.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(5);
 
 insert into auth.users (id, email) values

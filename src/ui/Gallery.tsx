@@ -20,6 +20,7 @@ import {
   EmptyState,
   Fab,
   GlassView,
+  GoogleButton,
   Icon,
   IconButton,
   Menu,
@@ -131,6 +132,11 @@ export function Gallery() {
             <Button size="lg" variant="sky" block iconEnd="arrow-right">
               Let’s go
             </Button>
+          </Section>
+
+          <Section title="GoogleButton">
+            <GoogleButton onPress={() => {}} />
+            <GoogleButton onPress={() => {}} loading />
           </Section>
 
           <Section title="IconButton">

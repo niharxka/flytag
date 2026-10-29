@@ -1,5 +1,7 @@
 -- update_ride + cancel_ride: host only; seats never below the people already in.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(8);
 
 insert into auth.users (id, email) values

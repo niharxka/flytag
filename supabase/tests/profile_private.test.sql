@@ -1,5 +1,7 @@
 -- profile_private: only its owner can read or edit it. Nobody else, ever (§SCHEMA 4).
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(6);
 
 insert into auth.users (id, email) values

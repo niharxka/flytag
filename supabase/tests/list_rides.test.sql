@@ -1,5 +1,7 @@
 -- list_rides + nearby_rides: what the Rides tab and the merge suggestion see (§9.4 AC).
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(13);
 
 -- Start from no rides (seed data included); the rollback at the end puts everything back.

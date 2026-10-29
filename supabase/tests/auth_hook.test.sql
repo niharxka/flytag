@@ -1,5 +1,7 @@
 -- hook_restrict_signup_to_ucsd: the server-side @ucsd.edu gate (§9.2 AC).
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(6);
 
 select is(public.hook_restrict_signup_to_ucsd('{"user":{"email":"triton@ucsd.edu"}}'),

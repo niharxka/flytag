@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { sendCode, signOut, verifyCode } from './auth.api';
+import { sendCode, signInWithGoogle, signOut, verifyCode } from './auth.api';
 
 // No cache invalidation here: a successful verify/sign-out changes the session, AuthProvider
 // hears about it, and the root layout's route guards move the user to the right screen.
@@ -21,4 +21,8 @@ export function useVerifyCode() {
 
 export function useSignOut() {
   return useMutation({ mutationFn: signOut });
+}
+
+export function useSignInWithGoogle() {
+  return useMutation({ mutationFn: signInWithGoogle });
 }

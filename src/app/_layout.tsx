@@ -64,6 +64,8 @@ function RootStack() {
         <Stack.Protected guard={onboarded} redirectTo={session ? '/onboarding' : '/welcome'}>
           <Stack.Screen name="(app)" />
         </Stack.Protected>
+        {/* Google sends the browser back here; it must be reachable signed in or out. */}
+        <Stack.Screen name="auth/callback" />
         <Stack.Screen name="dev/ui" />
       </Stack>
     </WebFrame>

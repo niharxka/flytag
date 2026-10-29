@@ -1,6 +1,8 @@
 -- leave_ride: riders leave; a leaving host hands over to the earliest rider; an empty ride is
 -- cancelled (§13 Phase 4 exit: "host handoff works").
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(7);
 
 insert into auth.users (id, email) values

@@ -1,5 +1,7 @@
 -- home_label: a home is a college OR a custom label, never both; onboarding needs one.
 begin;
+-- Hosted projects keep pgTAP in the `extensions` schema; make it findable for this test only.
+set local search_path = public, extensions;
 select plan(7);
 
 insert into auth.users (id, email) values ('aaaaaaaa-0000-4000-8000-000000000001', 'ana@ucsd.edu');

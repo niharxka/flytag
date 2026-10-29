@@ -21,7 +21,16 @@ type Props = {
 
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-export function DateTimeField({ label, value, onChange, mode, timeZoneName, minimumDate, maximumDate, error }: Props) {
+export function DateTimeField({
+  label,
+  value,
+  onChange,
+  mode,
+  timeZoneName,
+  minimumDate,
+  maximumDate,
+  error,
+}: Props) {
   const c = useThemeColors();
   const { theme } = useThemeMode();
   const tz = timeZoneName ?? LOCAL_TZ;
