@@ -40,8 +40,8 @@ Use a privacy-light analytics tool (e.g., PostHog) or simple Postgres counts at 
 1. Ride timeline: 3 steps (artifact screens) or 4 (artifact README: Posted → Matched → Meet → At the airport)?
 2. The PDF chat had "Location / Other" tabs; the artifact dropped them. Replace with a pinned `meet_spot` on the ride (current spec) or keep tabs?
 3. Fare share: divide by current riders or by max seats?
-4. Should a user be allowed in two overlapping rides (same direction, within ~2 h)?
-5. Day separators in the rides list?
+4. ~~Should a user be allowed in two overlapping rides (same direction, within ~2 h)?~~ **Decided (Phase 3):** allowed, but Post a ride suggests joinable rides within ±60 min ("Ride together instead?", `nearby_rides`).
+5. ~~Day separators in the rides list?~~ **Decided (Phase 3):** yes, sticky San Diego day headers (Today / Tomorrow / Tue 3/18).
 6. When someone blocks a co-rider, remove either from the shared upcoming ride, or only hide chat?
 7. Intent tag per profile only, or choosable per ride when joining?
 8. App Review login approach (§12.3).

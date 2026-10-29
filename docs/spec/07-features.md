@@ -31,9 +31,9 @@ Each feature lists behaviour, states, and acceptance criteria (AC). "Empty / loa
 - **AC:** list is one network request per page; full rides remain visible; blocked hosts' rides never appear.
 
 ### 9.5 Post a ride (04)
-- Form sheet: Date, "Leave campus at" (to_airport) / "Meet at SAN at" (to_campus), Max riders stepper (2–6, default 4), optional estimated fare and meet spot (collapsed "More details").
+- Form sheet: Date, "Leave campus at" (to_airport) / "Meet at SAN at" (to_campus), Max riders stepper (2–6, default 4), optional estimated fare, meet spot and notes, all shown up front (no collapsed section).
 - Primary "Post ride", ghost "Cancel". Loading state on submit; on success navigate to the new ride.
-- **AC:** can't post a time in the past; poster is automatically the host and counted in seats; double-tap doesn't create two rides (disable while pending + idempotent client request id **[DECIDE]**).
+- **AC:** can't post a time in the past; poster is automatically the host and counted in seats; double-tap doesn't create two rides (disable while pending + idempotent client request id; **decided Phase 3:** both).
 
 ### 9.6 Ride detail (05)
 - Header eyebrow `Tue 3/18 · Niharika, Sixth`, title `11:00 AM`, back button.
@@ -57,7 +57,7 @@ Each feature lists behaviour, states, and acceptance criteria (AC). "Empty / loa
 
 ### 9.9 Profile (06) and settings
 - Avatar (tap to change: `expo-image-picker` → resize with `expo-image-manipulator` to 512 px → upload to `avatars/{userId}/…`), name, college tag, intent tag.
-- Menu: Display name, School email (Verified, read-only), Home college, Notifications, Safety & reporting, plus Theme (System / Mist / Charcoal) and Sign out.
+- Menu: Display name, School email (Verified, read-only), Home college, Notifications, Safety & reporting, plus Theme (Light / Dark; follows the phone until the user picks one) and Sign out.
 - Notification settings: per-type toggles; if OS permission denied, show a row linking to system settings.
 
 ### 9.10 Safety

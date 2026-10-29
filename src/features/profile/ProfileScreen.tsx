@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useSession, useSignOut } from '@/features/auth';
 import { errorMessage } from '@/lib/errors';
-import { useThemeColors } from '@/theme/useThemeMode';
-import { AppHeader, Avatar, Backdrop, Button, Menu, Tag } from '@/ui';
+import { useThemeColors, useThemeMode } from '@/theme/useThemeMode';
+import { AppHeader, Avatar, Backdrop, Button, Menu, SegmentedControl, Tag } from '@/ui';
 
 import { useMyProfile } from './profile.hooks';
 
@@ -20,6 +20,7 @@ export function ProfileScreen() {
   const { session } = useSession();
   const profile = useMyProfile(session?.user.id);
   const signOut = useSignOut();
+  const { theme, setTheme } = useThemeMode();
   const p = profile.data;
 
   return (
@@ -49,6 +50,18 @@ export function ProfileScreen() {
                   { label: 'Home college', meta: p.collegeName ?? undefined },
                 ]}
               />
+              <View className="gap-space-2">
+                <Text className="type-label px-space-2 text-ink-muted">Theme</Text>
+                <SegmentedControl
+                  label="Theme"
+                  options={[
+                    { label: 'Light', icon: 'sun' },
+                    { label: 'Dark', icon: 'moon' },
+                  ]}
+                  value={theme === 'dark' ? 1 : 0}
+                  onChange={(i) => setTheme(i === 1 ? 'dark' : 'light')}
+                />
+              </View>
               {signOut.error && (
                 <Text className="type-body-sm text-danger" accessibilityRole="alert">
                   {errorMessage(signOut.error)}

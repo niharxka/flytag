@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { formatRideDate, formatRideTime, RIDE_TZ } from '@/lib/dates';
 import { useThemeMode } from '@/theme/useThemeMode';
 
 import {
@@ -14,6 +15,7 @@ import {
   ChatComposer,
   CodeField,
   ContentCard,
+  DateTimeField,
   EmptyState,
   Fab,
   GlassView,
@@ -79,6 +81,7 @@ export function Gallery() {
   const [seats, setSeats] = useState(4);
   const [message, setMessage] = useState('');
   const [code, setCode] = useState('418');
+  const [when, setWhen] = useState(() => new Date());
   const [replayKey, setReplayKey] = useState(0);
 
   return (
@@ -88,7 +91,7 @@ export function Gallery() {
         <View className="gap-space-6 px-space-4">
           <SegmentedControl
             label="Theme"
-            options={['Mist', 'Charcoal']}
+            options={['Light', 'Dark']}
             value={theme === 'dark' ? 1 : 0}
             onChange={(i) => setTheme(i === 1 ? 'dark' : 'light')}
           />
@@ -171,6 +174,26 @@ export function Gallery() {
           <Section title="CodeField">
             <CodeField value={code} onChangeText={setCode} />
             <CodeField value="123456" onChangeText={() => {}} error="That code is wrong or has expired." />
+          </Section>
+
+          <Section title="DateTimeField">
+            <DateTimeField
+              label="Date"
+              mode="date"
+              value={when}
+              onChange={setWhen}
+              format={formatRideDate}
+              timeZoneName={RIDE_TZ}
+            />
+            <DateTimeField
+              label="Leave campus at"
+              mode="time"
+              value={when}
+              onChange={setWhen}
+              format={formatRideTime}
+              timeZoneName={RIDE_TZ}
+              error="Pick a time at least 30 minutes from now."
+            />
           </Section>
 
           <Section title="Tag">

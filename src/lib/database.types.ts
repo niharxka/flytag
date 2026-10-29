@@ -77,18 +77,138 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"ride_members": {
+                  Row: {
+                    "intent": Database["public"]['Enums']["rider_intent"] | null,"joined_at": string,"left_at": string | null,"ride_id": string,"role": Database["public"]['Enums']["member_role"],"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "intent"?: Database["public"]['Enums']["rider_intent"] | null,"joined_at"?: string,"left_at"?: string | null,"ride_id": string,"role"?: Database["public"]['Enums']["member_role"],"user_id": string
+                  }
+                  Update: {
+                    "intent"?: Database["public"]['Enums']["rider_intent"] | null,"joined_at"?: string,"left_at"?: string | null,"ride_id"?: string,"role"?: Database["public"]['Enums']["member_role"],"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ride_members_ride_id_fkey"
+      columns: ["ride_id"]
+isOneToOne: false
+      referencedRelation: "ride_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ride_members_ride_id_fkey"
+      columns: ["ride_id"]
+isOneToOne: false
+      referencedRelation: "rides"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ride_members_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"rides": {
+                  Row: {
+                    "airport_code": string,"client_request_id": string | null,"created_at": string,"created_by": string,"depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"est_total_cost_cents": number | null,"id": string,"meet_spot": string | null,"notes": string | null,"seats_max": number,"status": Database["public"]['Enums']["ride_status"],"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "airport_code"?: string,"client_request_id"?: string | null,"created_at"?: string,"created_by": string,"depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"est_total_cost_cents"?: number | null,"id"?: string,"meet_spot"?: string | null,"notes"?: string | null,"seats_max"?: number,"status"?: Database["public"]['Enums']["ride_status"],"updated_at"?: string
+                  }
+                  Update: {
+                    "airport_code"?: string,"client_request_id"?: string | null,"created_at"?: string,"created_by"?: string,"depart_at"?: string,"direction"?: Database["public"]['Enums']["ride_direction"],"est_total_cost_cents"?: number | null,"id"?: string,"meet_spot"?: string | null,"notes"?: string | null,"seats_max"?: number,"status"?: Database["public"]['Enums']["ride_status"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "rides_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
-            [_ in never]: never
+            "ride_cards": {
+                  Row: {
+                    "depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"est_total_cost_cents": number | null,"host_college": string | null,"host_id": string | null,"host_name": string | null,"id": string,"is_host": boolean | null,"is_member": boolean | null,"meet_spot": string | null,"notes": string | null,"rider_names": (string)[] | null,"seats_max": number,"seats_taken": number | null,"status": Database["public"]['Enums']["ride_status"]
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    {
+      foreignKeyName: "ride_members_user_id_fkey"
+      columns: ["host_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                }
           }
           Functions: {
-            "hook_restrict_signup_to_ucsd":
+            "create_ride":
+{ Args: { "p_client_request_id"?: string,"p_depart_at": string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_est_total_cost_cents"?: number,"p_meet_spot"?: string,"p_notes"?: string,"p_seats_max"?: number }; Returns: string
+                           },
+"hook_restrict_signup_to_ucsd":
 { Args: { "event": Json }; Returns: Json
+                           },
+"list_rides":
+{ Args: { "p_after_depart_at"?: string,"p_after_id"?: string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_page_size"?: number }; Returns: {
+              "depart_at": string,
+"direction": Database["public"]['Enums']["ride_direction"],
+"est_total_cost_cents": number | null,
+"host_college": string | null,
+"host_id": string | null,
+"host_name": string | null,
+"id": string,
+"is_host": boolean | null,
+"is_member": boolean | null,
+"meet_spot": string | null,
+"notes": string | null,
+"rider_names": (string)[] | null,
+"seats_max": number,
+"seats_taken": number | null,
+"status": Database["public"]['Enums']["ride_status"]
+            }[]
+                          SetofOptions: {
+        from: "*"
+        to: "ride_cards"
+        isOneToOne: false
+        isSetofReturn: true
+      } },
+"nearby_rides":
+{ Args: { "p_depart_at": string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_window_minutes"?: number }; Returns: {
+              "depart_at": string,
+"direction": Database["public"]['Enums']["ride_direction"],
+"est_total_cost_cents": number | null,
+"host_college": string | null,
+"host_id": string | null,
+"host_name": string | null,
+"id": string,
+"is_host": boolean | null,
+"is_member": boolean | null,
+"meet_spot": string | null,
+"notes": string | null,
+"rider_names": (string)[] | null,
+"seats_max": number,
+"seats_taken": number | null,
+"status": Database["public"]['Enums']["ride_status"]
+            }[]
+                          SetofOptions: {
+        from: "*"
+        to: "ride_cards"
+        isOneToOne: false
+        isSetofReturn: true
+      } },
+"ride_past_cutoff":
+{ Args: Record<PropertyKey, never>; Returns: string
                            }
           }
           Enums: {
-            "rider_intent": "networking"|"flypal"
+            "member_role": "host"|"rider","ride_direction": "to_airport"|"to_campus","ride_status": "active"|"cancelled","rider_intent": "networking"|"flypal"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -208,7 +328,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "rider_intent": ["networking", "flypal"]
+            "member_role": ["host", "rider"],"ride_direction": ["to_airport", "to_campus"],"ride_status": ["active", "cancelled"],"rider_intent": ["networking", "flypal"]
           }
         }
 } as const

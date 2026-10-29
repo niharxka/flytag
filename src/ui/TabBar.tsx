@@ -4,6 +4,9 @@ import { GlassView } from './GlassView';
 import { Icon, type IconName } from './Icon';
 import { PressableScale } from './PressableScale';
 
+/** Rendered height (8 padding + 56 tab + 8 padding), so screens can keep content clear of it. */
+export const TAB_BAR_HEIGHT = 72;
+
 export type TabItem = { label: string; icon: IconName; active?: boolean; onPress?: () => void };
 
 type Props = { items: TabItem[] };

@@ -1,6 +1,7 @@
 /**
  * Turn errors from Supabase into copy a rider can act on (CLAUDE.md: RPC error codes → user
- * copy live here). Auth errors carry a `code` (e.g. "otp_expired") and an HTTP `status`.
+ * copy live here). Auth errors carry a `code` (e.g. "otp_expired") and an HTTP `status`;
+ * RPC errors carry our code (e.g. "INVALID_TIME") as the message.
  * Unknown errors get a generic line; the original stays in the console for debugging.
  */
 type MaybeAuthError = { code?: string; status?: number; message?: string; name?: string };
@@ -13,8 +14,18 @@ const AUTH_COPY: Record<string, string> = {
   validation_failed: 'That doesn’t look like an email address.',
 };
 
+// RPC errors: our SQL functions raise the code as the message (see each migration's header).
+const RPC_COPY: Record<string, string> = {
+  NOT_ONBOARDED: 'Finish setting up your profile first.',
+  INVALID_TIME: 'Pick a time in the future, up to 90 days out.',
+  INVALID_SEATS: 'A ride has 2 to 6 seats, including you.',
+  INVALID_DETAILS: 'Check the fare, meet spot and notes, then try again.',
+};
+
 export function errorMessage(error: unknown): string {
   const e = (error ?? {}) as MaybeAuthError;
+
+  if (e.message && RPC_COPY[e.message]) return RPC_COPY[e.message];
 
   // The signup hook's own message ("Use your @ucsd.edu email.") is already user copy.
   if (e.message?.includes('@ucsd.edu')) return e.message;

@@ -29,7 +29,18 @@ jest.mock('@/features/profile', () => ({
   OnboardingForm: mockScreen('Onboarding screen'),
   ProfileScreen: mockScreen('Profile screen'),
 }));
+jest.mock('@/features/rides', () => ({
+  RidesScreen: mockScreen('Rides screen'),
+  PostRideForm: mockScreen('Post ride screen'),
+  RideSummary: mockScreen('Ride screen'),
+}));
 jest.mock('expo-font', () => ({ useFonts: () => [true, null] }));
+// Jest stubs global.css, so NativeWind never learns darkMode is 'class' and throws on a manual
+// scheme change. Theme switching isn't what these tests are about; skip applying it.
+jest.mock('@/theme/useThemeMode', () => ({
+  ...jest.requireActual('@/theme/useThemeMode'),
+  useApplyThemePref: () => {},
+}));
 
 const signedIn = { user: { id: 'u1', email: 'a@ucsd.edu' } };
 
@@ -53,7 +64,7 @@ describe('auth gate', () => {
     mockProfile.onboardedAt = '2026-10-29T00:00:00Z';
     await renderRouter('./src/app', { initialUrl: '/' });
     expect(screen).toHavePathname('/');
-    expect(screen.getByText('No rides yet')).toBeTruthy();
+    expect(screen.getByText('Rides screen')).toBeTruthy();
   });
 
   it('onboarded: a stale link to sign-in lands on Rides', async () => {

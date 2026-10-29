@@ -15,6 +15,9 @@ describe('errorMessage', () => {
   it('explains network failures', () => {
     expect(errorMessage(new TypeError('Network request failed'))).toMatch(/Can’t reach FlyTag/);
   });
+  it('maps RPC error codes', () => {
+    expect(errorMessage({ code: 'P0001', message: 'INVALID_TIME' })).toMatch(/time in the future/);
+  });
   it('falls back to a generic line', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {});
     expect(errorMessage({ code: 'mystery' })).toBe('Something went wrong. Try again.');

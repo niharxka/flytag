@@ -11,7 +11,7 @@ import { AuthProvider, useSession } from '@/features/auth';
 import { useMyProfile } from '@/features/profile';
 import { queryClient } from '@/lib/queryClient';
 import { fontAssets } from '@/theme/fonts';
-import { useThemeMode } from '@/theme/useThemeMode';
+import { useApplyThemePref, useThemeMode } from '@/theme/useThemeMode';
 
 // Keep the splash up until fonts, the saved session and (if signed in) the profile are known,
 // so nobody sees Welcome flash before they're sent to the tabs.
@@ -37,6 +37,7 @@ export default function RootLayout() {
  * Stack.Protected removes the screens whose guard is false and redirects away from them.
  */
 function RootStack() {
+  useApplyThemePref();
   const { theme } = useThemeMode();
   const { session, initializing } = useSession();
   const profile = useMyProfile(session?.user.id);
