@@ -1,0 +1,56 @@
+<!doctype html>
+<!-- Source of public/og-image.png (the link-preview card). Regenerate with `npm run og-image`
+     after a brand change. Colours are the Brand System tokens (docs/design/tokens.json). -->
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: 'OSO'; src: url('../../assets/fonts/OpenSauceOne-Black.ttf'); font-weight: 900; }
+  @font-face { font-family: 'OSO'; src: url('../../assets/fonts/OpenSauceOne-Regular.ttf'); font-weight: 400; }
+  @font-face { font-family: 'OSO'; src: url('../../assets/fonts/OpenSauceOne-SemiBold.ttf'); font-weight: 600; }
+  html, body { margin: 0; }
+  .card {
+    position: relative; width: 1200px; height: 630px; overflow: hidden; box-sizing: border-box;
+    padding: 72px 80px; font-family: 'OSO'; color: #ffffff;
+    /* The sky haze (Backdrop tone="sky"): atmos blobs and white streaks over atmos-deep. */
+    background:
+      radial-gradient(55% 14% at 30% 30%, rgba(255,255,255,0.16), rgba(255,255,255,0) 100%),
+      radial-gradient(60% 12% at 72% 70%, rgba(255,255,255,0.12), rgba(255,255,255,0) 100%),
+      radial-gradient(55% 55% at 5% 0%, rgba(110,159,190,0.95), rgba(110,159,190,0) 100%),
+      radial-gradient(50% 50% at 100% 100%, rgba(110,159,190,0.8), rgba(110,159,190,0) 100%),
+      #2f5a77;
+  }
+  .eyebrow { font-weight: 600; font-size: 26px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9; }
+  .wordmark { font-weight: 900; font-size: 168px; line-height: 150px; letter-spacing: -0.04em; margin-top: 150px; }
+  .lead { font-weight: 400; font-size: 34px; line-height: 46px; margin-top: 26px; max-width: 760px; }
+  .plane { position: absolute; right: 64px; top: 92px; width: 470px; }
+  .pill { position: absolute; right: 80px; bottom: 72px; padding: 16px 30px; border-radius: 999px;
+    background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.35);
+    font-weight: 600; font-size: 26px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">UC San Diego · Rides to and from SAN</div>
+    <div class="wordmark">FlyTag.</div>
+    <div class="lead">Tag along with fellow classmates to and from the airport.</div>
+    <!-- The FlyTag plane (docs/design/brand-system.md), nose left. -->
+    <svg class="plane" viewBox="30 14 340 146" xmlns="http://www.w3.org/2000/svg">
+      <path d="M152 78L192 50H208L198 78Z" fill="#6e9fbe"/>
+      <path d="M324 78L342 64H352L344 78Z" fill="#9b1f2c"/>
+      <path d="M300 78L336 22C340 16 352 16 352 26L346 78Z" fill="#d23440"/>
+      <path d="M344 24C347 18 352 20 352 26L346 78H339Z" fill="#9b1f2c"/>
+      <path d="M40 100C40 86 56 78 80 78H332L362 72C368 71 369 79 364 84L340 110C334 116 326 118 318 118H80C56 118 40 112 40 100Z" fill="#f4f6f8"/>
+      <path d="M41 105H346L340 110C334 116 326 118 318 118H80C60 118 46 114 41 105Z" fill="#b6c7d8"/>
+      <path d="M58 99H344L339 104H50C52 101 55 99 58 99Z" fill="#d23440"/>
+      <path d="M50 94C54 86 64 82 76 82L74 94Z" fill="#a2cffd"/>
+      <g fill="#2f5a77"><circle cx="112" cy="90" r="4"/><circle cx="138" cy="90" r="4"/><circle cx="164" cy="90" r="4"/><circle cx="190" cy="90" r="4"/><circle cx="216" cy="90" r="4"/><circle cx="242" cy="90" r="4"/></g>
+      <path d="M140 106L216 152H238L208 106Z" fill="#a2cffd"/>
+      <path d="M216 152H238L234 146H212Z" fill="#6e9fbe"/>
+      <path d="M316 106L348 128H362L346 104Z" fill="#d23440"/>
+      <path d="M348 128H362L360 124H343Z" fill="#9b1f2c"/>
+    </svg>
+    <div class="pill">Split the fare · Chat with your ride</div>
+  </div>
+</body>
+</html>
