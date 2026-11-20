@@ -6,31 +6,43 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+import { useIsGuest } from '@/features/auth';
+
 import {
   cancelRide,
   createRide,
+  getMyRideOutcome,
+  getPendingRideOutcome,
   getRide,
+  getRideGuest,
   getRiderContact,
   joinRide,
   leaveRide,
   listRideMembers,
   listRides,
+  listRidesGuest,
   nearbyRides,
+  recordRideOutcome,
   RIDES_PAGE_SIZE,
   ridesKeys,
   updateRide,
   type Direction,
   type Ride,
   type RideCursor,
+  type RideOutcome,
   type RiderIntent,
 } from './rides.api';
 import type { PostRide } from './rides.schemas';
 
-/** Rides tab: pages of 20, fetched as you scroll. Refetches when you return to the app. */
+/**
+ * Rides tab: pages of 20, fetched as you scroll. Refetches when you return to the app.
+ * Guests read the names-free version; signing in clears the cache, so nothing carries over.
+ */
 export function useRides(direction: Direction) {
+  const guest = useIsGuest();
   return useInfiniteQuery({
-    queryKey: ridesKeys.list(direction),
-    queryFn: ({ pageParam }) => listRides(direction, pageParam),
+    queryKey: guest ? ridesKeys.guestList(direction) : ridesKeys.list(direction),
+    queryFn: ({ pageParam }) => (guest ? listRidesGuest : listRides)(direction, pageParam),
     initialPageParam: null as RideCursor | null,
     // A short page means we've reached the end.
     getNextPageParam: (last) =>
@@ -55,7 +67,11 @@ export function useNearbyRides(direction: Direction, departAt: Date, enabled = t
 }
 
 export function useRide(id: string) {
-  return useQuery({ queryKey: ridesKeys.detail(id), queryFn: () => getRide(id) });
+  const guest = useIsGuest();
+  return useQuery({
+    queryKey: guest ? ridesKeys.guestDetail(id) : ridesKeys.detail(id),
+    queryFn: () => (guest ? getRideGuest : getRide)(id),
+  });
 }
 
 export function useCreateRide() {
@@ -69,8 +85,14 @@ export function useCreateRide() {
   });
 }
 
+/** Who's in a ride. Off for guests: the server would refuse, and they only see seat counts. */
 export function useRideMembers(rideId: string) {
-  return useQuery({ queryKey: ridesKeys.members(rideId), queryFn: () => listRideMembers(rideId) });
+  const guest = useIsGuest();
+  return useQuery({
+    queryKey: ridesKeys.members(rideId),
+    queryFn: () => listRideMembers(rideId),
+    enabled: !guest,
+  });
 }
 
 // Joining, leaving and editing change seat counts, names and "you're in" across the detail,
@@ -123,4 +145,36 @@ export function useCancelRide(rideId: string) {
 /** Ask the server for a co-rider's number right when Call is tapped; never cached. */
 export function useRiderContact(rideId: string) {
   return useMutation({ mutationFn: (userId: string) => getRiderContact(rideId, userId) });
+}
+
+/** The ride the Rides tab asks "Did you ride together?" about, if any. Off for guests. */
+export function usePendingRideOutcome() {
+  const guest = useIsGuest();
+  return useQuery({
+    queryKey: ridesKeys.pendingOutcome,
+    queryFn: getPendingRideOutcome,
+    enabled: !guest,
+  });
+}
+
+/** Your answer for one ride; `enabled` is false until the ride has left and you were in it. */
+export function useMyRideOutcome(rideId: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ridesKeys.outcome(rideId),
+    queryFn: () => getMyRideOutcome(rideId),
+    enabled,
+  });
+}
+
+export function useRecordRideOutcome(rideId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (outcome: RideOutcome) => recordRideOutcome(rideId, outcome),
+    // The detail shows the answer; the Rides tab card moves on to the next ride (or disappears).
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ridesKeys.outcome(rideId) }),
+        queryClient.invalidateQueries({ queryKey: ridesKeys.pendingOutcome }),
+      ]),
+  });
 }

@@ -2,10 +2,10 @@ import { router } from 'expo-router';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useSession, useSignOut } from '@/features/auth';
+import { useIsGuest, useSession, useSignOut } from '@/features/auth';
 import { errorMessage } from '@/lib/errors';
 import { useThemeColors, useThemeMode } from '@/theme/useThemeMode';
-import { AppHeader, Avatar, Backdrop, Button, IconButton, Menu, SegmentedControl, Tag } from '@/ui';
+import { AppHeader, Avatar, Backdrop, Button, EmptyState, IconButton, Menu, SegmentedControl, Tag } from '@/ui';
 
 import { useAvatarUrl, useMyProfile } from './profile.hooks';
 
@@ -14,13 +14,32 @@ const INTENT_TAG = {
   flypal: { label: 'FlyPal', tone: 'deep' },
 } as const;
 
+// Guests can still pick a theme: it lives on the device, not the account.
+function ThemePicker() {
+  const { theme, setTheme } = useThemeMode();
+  return (
+    <View className="gap-space-2">
+      <Text className="type-label px-space-2 text-ink-muted">Theme</Text>
+      <SegmentedControl
+        label="Theme"
+        options={[
+          { label: 'Light', icon: 'sun' },
+          { label: 'Dark', icon: 'moon' },
+        ]}
+        value={theme === 'dark' ? 1 : 0}
+        onChange={(i) => setTheme(i === 1 ? 'dark' : 'light')}
+      />
+    </View>
+  );
+}
+
 /** Screen 06 (§9.9). Tapping a detail, the avatar or the header pencil opens the edit screen. */
 export function ProfileScreen() {
   const c = useThemeColors();
   const { session } = useSession();
   const profile = useMyProfile(session?.user.id);
   const signOut = useSignOut();
-  const { theme, setTheme } = useThemeMode();
+  const guest = useIsGuest();
   const p = profile.data;
   const photo = useAvatarUrl(p?.avatarPath);
   const edit = () => router.push('/settings/edit-profile');
@@ -36,7 +55,21 @@ export function ProfileScreen() {
               p ? <IconButton icon="pencil" label="Edit profile" variant="glass" onPress={edit} /> : null
             }
           />
-          {!p ? (
+          {guest ? (
+            <View className="gap-space-5 px-space-4">
+              <EmptyState
+                icon="user"
+                title="Your profile lives here"
+                body="Sign in with your UCSD account to post rides, join them, and show co-riders who you are."
+                action={
+                  <Button variant="sky" onPress={() => router.push('/welcome')}>
+                    Sign in
+                  </Button>
+                }
+              />
+              <ThemePicker />
+            </View>
+          ) : !p ? (
             <ActivityIndicator color={c.inkMuted} accessibilityLabel="Loading profile" />
           ) : (
             <View className="gap-space-5 px-space-4">
@@ -66,18 +99,7 @@ export function ProfileScreen() {
                 // Email is your sign-in, so it can't change here; the other rows open the editor.
                 onSelect={(i) => i !== 2 && edit()}
               />
-              <View className="gap-space-2">
-                <Text className="type-label px-space-2 text-ink-muted">Theme</Text>
-                <SegmentedControl
-                  label="Theme"
-                  options={[
-                    { label: 'Light', icon: 'sun' },
-                    { label: 'Dark', icon: 'moon' },
-                  ]}
-                  value={theme === 'dark' ? 1 : 0}
-                  onChange={(i) => setTheme(i === 1 ? 'dark' : 'light')}
-                />
-              </View>
+              <ThemePicker />
               {signOut.error && (
                 <Text className="type-body-sm text-danger" accessibilityRole="alert">
                   {errorMessage(signOut.error)}

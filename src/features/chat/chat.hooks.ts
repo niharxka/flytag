@@ -38,8 +38,9 @@ export function useMessages(rideId: string, enabled = true) {
 }
 
 /** Rides I'm in with their latest message (Chats tab). */
-export function useMyChats() {
-  return useQuery({ queryKey: chatKeys.myChats(), queryFn: listMyChats });
+/** Off for guests: they have no rides, and my_chats needs a signed-in caller. */
+export function useMyChats(enabled = true) {
+  return useQuery({ queryKey: chatKeys.myChats(), queryFn: listMyChats, enabled });
 }
 
 // Put a message at the top of the newest page, or update it in place if it's already there

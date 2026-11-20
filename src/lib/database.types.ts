@@ -23,7 +23,27 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "colleges": {
+            "activity_days": {
+                  Row: {
+                    "day": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "day": string,"user_id": string
+                  }
+                  Update: {
+                    "day"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "activity_days_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"colleges": {
                   Row: {
                     "id": string,"name": string,"sort": number
                   }
@@ -71,14 +91,14 @@ isOneToOne: false
                   ]
                 },"profile_private": {
                   Row: {
-                    "notify_new_message": boolean,"notify_ride_reminder": boolean,"notify_ride_updated": boolean,"notify_rider_joined": boolean,"phone_e164": string | null,"saved_home_labels": (string)[],"share_phone": boolean,"theme_pref": string,"user_id": string
+                    "heard_from": Database["public"]['Enums']["heard_from"] | null,"notify_new_message": boolean,"notify_ride_reminder": boolean,"notify_ride_updated": boolean,"notify_rider_joined": boolean,"phone_e164": string | null,"saved_home_labels": (string)[],"share_phone": boolean,"signup_source": string | null,"theme_pref": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"saved_home_labels"?: (string)[],"share_phone"?: boolean,"theme_pref"?: string,"user_id": string
+                    "heard_from"?: Database["public"]['Enums']["heard_from"] | null,"notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"saved_home_labels"?: (string)[],"share_phone"?: boolean,"signup_source"?: string | null,"theme_pref"?: string,"user_id": string
                   }
                   Update: {
-                    "notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"saved_home_labels"?: (string)[],"share_phone"?: boolean,"theme_pref"?: string,"user_id"?: string
+                    "heard_from"?: Database["public"]['Enums']["heard_from"] | null,"notify_new_message"?: boolean,"notify_ride_reminder"?: boolean,"notify_ride_updated"?: boolean,"notify_rider_joined"?: boolean,"phone_e164"?: string | null,"saved_home_labels"?: (string)[],"share_phone"?: boolean,"signup_source"?: string | null,"theme_pref"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -141,6 +161,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"ride_outcomes": {
+                  Row: {
+                    "answered_at": string,"ride_id": string,"rode_together": boolean,"total_fare_cents": number | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "answered_at"?: string,"ride_id": string,"rode_together": boolean,"total_fare_cents"?: number | null,"user_id": string
+                  }
+                  Update: {
+                    "answered_at"?: string,"ride_id"?: string,"rode_together"?: boolean,"total_fare_cents"?: number | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ride_outcomes_ride_id_fkey"
+      columns: ["ride_id"]
+isOneToOne: false
+      referencedRelation: "ride_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ride_outcomes_ride_id_fkey"
+      columns: ["ride_id"]
+isOneToOne: false
+      referencedRelation: "rides"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ride_outcomes_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"rides": {
                   Row: {
                     "airport_code": string,"client_request_id": string | null,"created_at": string,"created_by": string,"depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"est_total_cost_cents": number | null,"id": string,"meet_spot": string | null,"notes": string | null,"seats_max": number,"status": Database["public"]['Enums']["ride_status"],"updated_at": string
@@ -187,6 +239,14 @@ isOneToOne: false
 "create_ride":
 { Args: { "p_client_request_id"?: string,"p_depart_at": string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_est_total_cost_cents"?: number,"p_meet_spot"?: string,"p_notes"?: string,"p_seats_max"?: number }; Returns: string
                            },
+"get_ride_guest":
+{ Args: { "p_ride_id": string }; Returns: Database["public"]['CompositeTypes']["guest_ride"][]
+                          SetofOptions: {
+        from: "*"
+        to: "guest_ride"
+        isOneToOne: false
+        isSetofReturn: true
+      } },
 "get_rider_contact":
 { Args: { "p_ride_id": string,"p_user_id": string }; Returns: string
                            },
@@ -234,6 +294,14 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"list_rides_guest":
+{ Args: { "p_after_depart_at"?: string,"p_after_id"?: string,"p_direction": Database["public"]['Enums']["ride_direction"],"p_page_size"?: number }; Returns: Database["public"]['CompositeTypes']["guest_ride"][]
+                          SetofOptions: {
+        from: "*"
+        to: "guest_ride"
+        isOneToOne: false
+        isSetofReturn: true
+      } },
 "my_chats":
 { Args: Record<PropertyKey, never>; Returns: {
               "depart_at": string,"direction": Database["public"]['Enums']["ride_direction"],"host_name": string,"last_at": string,"last_author_name": string,"last_body": string,"last_is_mine": boolean,"last_kind": Database["public"]['Enums']["message_kind"],"ride_id": string,"rider_names": (string)[],"seats_max": number,"seats_taken": number
@@ -263,8 +331,38 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"pending_ride_outcome":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "depart_at": string,
+"direction": Database["public"]['Enums']["ride_direction"],
+"est_total_cost_cents": number | null,
+"host_home": string | null,
+"host_id": string | null,
+"host_name": string | null,
+"id": string,
+"is_host": boolean | null,
+"is_member": boolean | null,
+"meet_spot": string | null,
+"notes": string | null,
+"rider_names": (string)[] | null,
+"seats_max": number,
+"seats_taken": number | null,
+"status": Database["public"]['Enums']["ride_status"]
+            }[]
+                          SetofOptions: {
+        from: "*"
+        to: "ride_cards"
+        isOneToOne: false
+        isSetofReturn: true
+      } },
 "post_system_message":
 { Args: { "p_body": string,"p_ride_id": string }; Returns: undefined
+                           },
+"record_activity":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"record_ride_outcome":
+{ Args: { "p_ride_id": string,"p_rode_together": boolean,"p_total_fare_cents"?: number }; Returns: undefined
                            },
 "ride_past_cutoff":
 { Args: Record<PropertyKey, never>; Returns: string
@@ -274,10 +372,12 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "member_role": "host"|"rider","message_kind": "text"|"system","ride_direction": "to_airport"|"to_campus","ride_status": "active"|"cancelled","rider_intent": "networking"|"flypal"
+            "heard_from": "instagram"|"whatsapp"|"friend"|"flyer"|"org"|"other","member_role": "host"|"rider","message_kind": "text"|"system","ride_direction": "to_airport"|"to_campus","ride_status": "active"|"cancelled","rider_intent": "networking"|"flypal"
           }
           CompositeTypes: {
-            [_ in never]: never
+            "guest_ride": {
+                        "id": string | null,"direction": Database["public"]['Enums']["ride_direction"] | null,"depart_at": string | null,"seats_max": number | null,"seats_taken": number | null,"status": Database["public"]['Enums']["ride_status"] | null
+                      }
           }
         }
 }
@@ -394,7 +494,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "member_role": ["host", "rider"],"message_kind": ["text", "system"],"ride_direction": ["to_airport", "to_campus"],"ride_status": ["active", "cancelled"],"rider_intent": ["networking", "flypal"]
+            "heard_from": ["instagram", "whatsapp", "friend", "flyer", "org", "other"],"member_role": ["host", "rider"],"message_kind": ["text", "system"],"ride_direction": ["to_airport", "to_campus"],"ride_status": ["active", "cancelled"],"rider_intent": ["networking", "flypal"]
           }
         }
 } as const

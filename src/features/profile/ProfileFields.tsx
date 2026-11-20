@@ -1,9 +1,9 @@
 import { Switch, Text, View } from 'react-native';
 
 import { useThemeColors } from '@/theme/useThemeMode';
-import { SegmentedControl, TextField } from '@/ui';
+import { Menu, SegmentedControl, TextField } from '@/ui';
 
-import { INTENTS, type IntentChoice } from './profile.schemas';
+import { HEARD_FROM, INTENTS, type HeardFrom, type IntentChoice } from './profile.schemas';
 
 // Fields shared by onboarding and Edit profile. Plain value/onChange props, so each form keeps
 // its own react-hook-form setup and these stay simple.
@@ -29,6 +29,37 @@ export function IntentField({
       <Text className="type-body-sm text-ink-muted">
         Shown next to your name. Networking: up for talking shop. FlyPal: happy to share the ride.
       </Text>
+    </View>
+  );
+}
+
+const HEARD_FROM_LABELS: Record<HeardFrom, string> = {
+  instagram: 'Instagram',
+  whatsapp: 'WhatsApp',
+  friend: 'A friend',
+  flyer: 'A flyer',
+  org: 'A student org',
+  other: 'Somewhere else',
+};
+
+/** Onboarding only. Tapping the chosen answer again clears it, since the question is optional. */
+export function HeardFromField({
+  value,
+  onChange,
+}: {
+  value: HeardFrom | null;
+  onChange: (v: HeardFrom | null) => void;
+}) {
+  const active = value ? HEARD_FROM.indexOf(value) : undefined;
+  return (
+    <View className="gap-space-2">
+      <Text className="type-label text-ink-muted">How did you hear about FlyTag? (optional)</Text>
+      <Menu
+        label="How did you hear about FlyTag?"
+        items={HEARD_FROM.map((h) => ({ label: HEARD_FROM_LABELS[h] }))}
+        active={active}
+        onSelect={(i) => onChange(i === active ? null : HEARD_FROM[i])}
+      />
     </View>
   );
 }

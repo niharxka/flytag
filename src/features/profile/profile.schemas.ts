@@ -75,8 +75,12 @@ const sharedFields = {
 const phoneToShare = (v: { sharePhone: boolean; phone?: string }) => !v.sharePhone || Boolean(v.phone);
 const phoneToShareIssue = { path: ['phone'], error: 'Add a number to share it.' };
 
+/** Answers to "How did you hear about FlyTag?", in the order shown (matches the heard_from enum). */
+export const HEARD_FROM = ['instagram', 'whatsapp', 'friend', 'flyer', 'org', 'other'] as const;
+export type HeardFrom = (typeof HEARD_FROM)[number];
+
 export const onboardingSchema = z
-  .object(sharedFields)
+  .object({ ...sharedFields, heardFrom: z.enum(HEARD_FROM).nullable() })
   .refine(phoneToShare, phoneToShareIssue)
   .transform(toHome);
 

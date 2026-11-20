@@ -25,6 +25,7 @@ const RPC_COPY: Record<string, string> = {
   RIDE_FULL: 'This ride just filled up.',
   RIDE_NOT_ACTIVE: 'This ride was cancelled.',
   RIDE_DEPARTED: 'This ride has already left.',
+  RIDE_NOT_DEPARTED: 'You can say how it went once the ride has left.',
   RIDE_NOT_FOUND: 'This ride isn’t available any more.',
   ALREADY_MEMBER: 'You’re already in this ride.',
   NOT_MEMBER: 'You’re not in this ride any more.',

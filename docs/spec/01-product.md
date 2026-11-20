@@ -6,7 +6,9 @@
 
 FlyTag lets UC San Diego students coordinate shared rides to and from San Diego International Airport (SAN) with verified classmates.
 
-**Core loop:** sign in with a UCSD email → browse rides by direction and time → join one or post your own → coordinate in the ride's group chat → get reminded and meet up.
+**Core loop:** browse rides by direction and time (no account needed) → sign in with a UCSD account to join one or post your own → coordinate in the ride's group chat → get reminded and meet up.
+
+**Guest browsing (decided 2026-11-19):** signed-out visitors can open every tab and every ride, but see only when, which way and how full: no names, colleges, photos, meet spot, notes or fare, since anyone can install the app. Posting, joining, chatting and editing a profile open Welcome to sign in.
 
 ### 1.1 MVP scope (v1)
 

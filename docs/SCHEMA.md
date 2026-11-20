@@ -2,7 +2,7 @@
 
 > Keep this file updated in the same PR as every migration. Full column details: `docs/spec/05-database.md` §6.
 >
-> **Built so far (Phases 2–5):** `colleges`, `profiles`, `profile_private`, the signup hook, the new-user trigger, `rides`, `ride_members`, the `ride_cards` view, `create_ride` / `list_rides` / `nearby_rides`, Phase 4's `join_ride` / `leave_ride` / `update_ride` / `cancel_ride` / `list_ride_members` / `get_rider_contact`, and Phase 5's `messages`, system-line triggers and `my_chats`. Everything else on this page is the plan.
+> **Built so far (Phases 2–5):** `colleges`, `profiles`, `profile_private`, the signup hook, the new-user trigger, `rides`, `ride_members`, the `ride_cards` view, `create_ride` / `list_rides` / `nearby_rides`, Phase 4's `join_ride` / `leave_ride` / `update_ride` / `cancel_ride` / `list_ride_members` / `get_rider_contact`, Phase 5's `messages`, system-line triggers and `my_chats`, guest browsing (`list_rides_guest` / `get_ride_guest`), and the §14 metrics (`activity_days`, `ride_outcomes`, acquisition columns, `analytics` views). Everything else on this page is the plan.
 
 | Migration | Adds |
 |---|---|
@@ -25,6 +25,11 @@
 | `20261102000002_system_messages.sql` | triggers that write "posted / joined / left / is now the host / Ride updated / cancelled" lines |
 | `20261102000003_my_chats.sql` | `my_chats()`: Chats tab, my rides + latest message, most recent first |
 | `20261103000001_saved_home_labels.sql` | `profile_private.saved_home_labels` (private list of custom home areas, max 10, 1–40 chars each via `home_labels_valid()`) |
+| `20261119000001_guest_browsing.sql` | `guest_ride` type, `list_rides_guest()` / `get_ride_guest()`: signed-out (anon) reads with times and seats only; security definer so anon gets no table policies |
+| `20261120000001_acquisition.sql` | `heard_from` enum; `profile_private.heard_from` (onboarding answer) and `signup_source` (utm_source of the first tagged web link) |
+| `20261120000002_activity_days.sql` | `activity_days` (one row per rider per San Diego day the app was opened), `record_activity()`; closed to the API |
+| `20261120000003_ride_outcomes.sql` | `ride_outcomes` ("Did you ride together?" + optional total fare, one per rider per ride), `record_ride_outcome()`, `pending_ride_outcome()` |
+| `20261120000004_analytics_views.sql` | `analytics` schema (not exposed to the API): `signups_by_source`, `ride_results`, `rides_weekly`, `monthly_active`, `retention_monthly` |
 
 ## 1. The diagram
 
@@ -36,6 +41,9 @@ erDiagram
     profiles ||--o{ rides : "posts (created_by)"
     rides ||--o{ ride_members : "has"
     profiles ||--o{ ride_members : "joins as"
+    rides ||--o{ ride_outcomes : "answered in"
+    profiles ||--o{ ride_outcomes : "answers"
+    profiles ||--o{ activity_days : "active on"
     rides ||--o{ messages : "has chat"
     profiles ||--o{ messages : "writes"
     profiles ||--o{ notifications : "receives"
@@ -57,6 +65,18 @@ erDiagram
         bool share_phone
         bool notify_flags
         text_array saved_home_labels
+        heard_from heard_from
+        text signup_source
+    }
+    ride_outcomes {
+        uuid ride_id PK
+        uuid user_id PK
+        bool rode_together
+        int total_fare_cents
+    }
+    activity_days {
+        uuid user_id PK
+        date day PK
     }
     rides {
         uuid id PK
@@ -130,9 +150,11 @@ Each item lives in the migration named next to it. If something "magically" happ
 | colleges | you're signed in |
 | profile photos (`avatars` bucket) | you're signed in, via a signed link (no public URLs) |
 
-**Who can write what (so far):** your own `profiles` row, only `display_name`, `college_id`, `home_label`, `intent`, `avatar_path`, `onboarded_at` (column grants); files in your own `avatars/<id>/` folder; your own `profile_private` settings (including `saved_home_labels`, your list of custom areas; only the chosen one is copied to the public `profiles.home_label`). Rows themselves are only created by the trigger. `colleges` changes only via migrations. `rides` / `ride_members`: no direct writes at all; only `create_ride`, `join_ride`, `leave_ride`, `update_ride`, `cancel_ride`.
+**Who can write what (so far):** your own `profiles` row, only `display_name`, `college_id`, `home_label`, `intent`, `avatar_path`, `onboarded_at` (column grants); files in your own `avatars/<id>/` folder; your own `profile_private` settings (including `saved_home_labels`, your list of custom areas; only the chosen one is copied to the public `profiles.home_label`). Rows themselves are only created by the trigger. `colleges` changes only via migrations. `rides` / `ride_members`: no direct writes at all; only `create_ride`, `join_ride`, `leave_ride`, `update_ride`, `cancel_ride`. `ride_outcomes` only via `record_ride_outcome` (members, after departure); `activity_days` only via `record_activity`. `heard_from` / `signup_source` are written at onboarding like your other private fields.
 | a ride and its members | you're signed in and haven't blocked the host |
 | a ride's messages | you're a current member of that ride (also over Realtime: RLS filters the stream) |
 | someone's phone number | you're both current members of the same ride **and** they turned on sharing (via `get_rider_contact` only) |
 | notifications, push tokens, blocks | they're yours |
 | reports | never (reviewed in the Supabase dashboard) |
+| your own `ride_outcomes` answers | always (others' answers: never) |
+| `activity_days`, anything in `analytics` | never (Supabase dashboard / SQL editor only) |

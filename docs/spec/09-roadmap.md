@@ -23,15 +23,22 @@ Sizes: S ≈ a few sessions, M ≈ a week of part-time work, L ≈ two-plus week
 
 ---
 
-## 14. Success metrics (instrument in Phase 8)
+## 14. Success metrics
 
-- **North star:** matched rides per week (rides that reach ≥ 2 riders before departure).
+Read them in the Supabase SQL editor from the `analytics` schema views (definitions live there, once). Weeks and months are San Diego ones.
+
+- **North star:** completed rides per week: rides where a rider answered "Did you ride together?" with yes (`analytics.rides_weekly.completed`). "Matched" (≥ 2 riders at departure) stays as the upper bound; `matched_unanswered` shows how many matched rides nobody has answered yet.
+- **Money saved:** total fare (middle reported fare, else the host's estimate) × (riders − 1), summed over completed rides (`dollars_saved`). For marketing: "students saved $X".
+- **Acquisition:** signups by tagged link (`?utm_source=`, web only, first link wins) and by the optional onboarding answer (Instagram, WhatsApp, a friend, a flyer, a student org, somewhere else) (`analytics.signups_by_source`). Promote with tagged links: `https://ucsdflytag.vercel.app/?utm_source=instagram`.
+- **Visitors → signups:** Vercel Web Analytics (cookieless, web only, script tag in `public/index.html`; switch on in the Vercel project).
+- **Retention:** monthly active riders and month-by-month cohorts from `activity_days` (`analytics.monthly_active`, `analytics.retention_monthly`). Airport trips cluster around school breaks, so compare months and breaks, not weeks. Data starts 2026-11-20.
 - Activation: % of new users who post or join a ride within 7 days.
 - Match rate: % of posted rides that reach ≥ 2 riders; median time-to-match.
 - Chat engagement: % of matched rides with ≥ 1 message from a non-host.
 - Safety: reports per 100 rides (watch, don't optimise blindly).
+- Phase 6: % of riders who allow push, and pushes that lead to an app open.
 
-Use a privacy-light analytics tool (e.g., PostHog) or simple Postgres counts at first; don't add tracking SDKs before beta.
+No third-party tracking SDKs in the app; the only outside tool is Vercel's cookieless page counter on the website. Mention usage data (app opens by day, ride answers, how you heard about FlyTag) in the privacy policy and store privacy labels before beta.
 
 ---
 

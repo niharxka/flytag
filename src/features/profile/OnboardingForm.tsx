@@ -9,7 +9,7 @@ import { AppHeader, Backdrop, Button, KeyboardScrollView } from '@/ui';
 import { HomeLocationField } from './HomeLocationField';
 import { useCompleteOnboarding } from './profile.hooks';
 import { onboardingSchema, type Onboarding, type OnboardingInput } from './profile.schemas';
-import { IntentField, PhoneFields } from './ProfileFields';
+import { HeardFromField, IntentField, PhoneFields } from './ProfileFields';
 
 /** Screen 02c (§9.3): home (required: a college or somewhere else), tag and phone (optional). */
 export function OnboardingForm({ userId }: { userId: string }) {
@@ -23,6 +23,7 @@ export function OnboardingForm({ userId }: { userId: string }) {
       intent: 'none',
       phone: '',
       sharePhone: false,
+      heardFrom: null,
     },
   });
   // The Home picker edits three form values at once, so it takes them as plain props.
@@ -81,6 +82,12 @@ export function OnboardingForm({ userId }: { userId: string }) {
                 )}
               />
             )}
+          />
+
+          <Controller
+            control={control}
+            name="heardFrom"
+            render={({ field }) => <HeardFromField value={field.value} onChange={field.onChange} />}
           />
 
           {complete.error && (

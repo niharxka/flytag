@@ -96,9 +96,23 @@ async function savePrivate(
   if (error) throw error;
 }
 
-/** Finish onboarding. onboarded_at is written last, so a failed first step leaves you on the form. */
-export async function completeOnboarding(userId: string, input: Onboarding): Promise<void> {
+/**
+ * Finish onboarding. onboarded_at is written last, so a failed first step leaves you on the form.
+ * `signupSource` is the tagged link this browser arrived from, if any (analytics feature).
+ */
+export async function completeOnboarding(
+  userId: string,
+  input: Onboarding,
+  signupSource: string | null,
+): Promise<void> {
   await savePrivate(userId, input);
+  // Acquisition answers go in their own update: they're onboarding-only, unlike savePrivate's
+  // fields, which Edit profile saves too.
+  const acquisition = await supabase
+    .from('profile_private')
+    .update({ heard_from: input.heardFrom, signup_source: signupSource })
+    .eq('user_id', userId);
+  if (acquisition.error) throw acquisition.error;
   const { error } = await supabase
     .from('profiles')
     .update({

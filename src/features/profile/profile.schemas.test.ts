@@ -7,6 +7,7 @@ const base = {
   intent: 'none' as const,
   phone: '',
   sharePhone: false,
+  heardFrom: null,
 };
 
 describe('onboardingSchema', () => {

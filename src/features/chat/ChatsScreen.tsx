@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useIsGuest } from '@/features/auth';
 import { formatChatTime, formatRideDate, formatRideTime } from '@/lib/dates';
 import { errorMessage } from '@/lib/errors';
 import { spacing } from '@/theme/tokens';
@@ -51,20 +52,33 @@ function ChatRow({ chat }: { chat: ChatSummary }) {
 export function ChatsScreen() {
   const c = useThemeColors();
   const insets = useSafeAreaInsets();
-  const chats = useMyChats();
+  const guest = useIsGuest();
+  const chats = useMyChats(!guest);
   const { refetch } = chats;
-  // Fresh every time the tab is opened (new messages may have arrived elsewhere).
+  // Fresh every time the tab is opened (new messages may have arrived elsewhere). refetch()
+  // ignores `enabled`, so guests are skipped here too.
   useFocusEffect(
     useCallback(() => {
-      void refetch();
-    }, [refetch]),
+      if (!guest) void refetch();
+    }, [refetch, guest]),
   );
 
   return (
     <Backdrop>
       <SafeAreaView className="flex-1" edges={['top']}>
         <AppHeader eyebrow="Your rides" title="Chats" trailing={null} />
-        {chats.isPending ? (
+        {guest ? (
+          <EmptyState
+            icon="chat"
+            title="Your ride chats show up here"
+            body="Sign in with your UCSD account to join a ride and plan the trip with your co-riders."
+            action={
+              <Button variant="sky" onPress={() => router.push('/welcome')}>
+                Sign in
+              </Button>
+            }
+          />
+        ) : chats.isPending ? (
           <ActivityIndicator className="mt-space-6" color={c.inkMuted} accessibilityLabel="Loading chats" />
         ) : chats.isError ? (
           <EmptyState

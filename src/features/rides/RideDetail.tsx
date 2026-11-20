@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useSession } from '@/features/auth';
+import { useIsGuest, useRequireSignIn, useSession } from '@/features/auth';
 import { useMyProfile } from '@/features/profile';
 import { confirmAction } from '@/lib/confirm';
 import { formatRideDate, formatRideTime } from '@/lib/dates';
@@ -22,8 +22,9 @@ import {
 
 import type { Ride, RiderIntent } from './rides.api';
 import { RidersPanel } from './RidersPanel';
-import { useCancelRide, useJoinRide, useLeaveRide, useRide } from './rides.hooks';
-import { fareShareDollars, rideTimeline } from './rides.logic';
+import { RideOutcomePrompt } from './RideOutcomePrompt';
+import { useCancelRide, useJoinRide, useLeaveRide, useMyRideOutcome, useRide } from './rides.hooks';
+import { fareShareDollars, formatSeats, rideTimeline } from './rides.logic';
 
 const TAG_CHOICES: (RiderIntent | null)[] = [null, 'networking', 'flypal'];
 
@@ -38,6 +39,18 @@ function Detail({ label, value, sub }: { label: string; value: string; sub?: str
 }
 
 type ChatSlot = (ride: Ride) => ReactNode;
+
+/** What a guest gets in place of the riders panel: how full it is, not who's in it. */
+function GuestRiders({ ride }: { ride: Ride }) {
+  return (
+    <GlassView className="gap-space-1 rounded-lg p-space-4">
+      <Text className="type-label px-space-1 text-ink-muted" accessibilityRole="header">
+        Riders · {formatSeats(ride.seatsTaken, ride.seatsMax)}
+      </Text>
+      <Text className="type-body-sm px-space-1 text-ink-muted">Sign in to see who’s going.</Text>
+    </GlassView>
+  );
+}
 
 /**
  * Screen 05 (§9.6). `renderChat` is the chat panel, passed in by the route so rides doesn't
@@ -70,6 +83,8 @@ export function RideDetail({ rideId, renderChat }: { rideId: string; renderChat?
 
 function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; renderChat?: ChatSlot }) {
   const { session } = useSession();
+  const guest = useIsGuest();
+  const requireSignIn = useRequireSignIn();
   const me = useMyProfile(session?.user.id);
   const join = useJoinRide(r.id);
   const leave = useLeaveRide(r.id);
@@ -83,6 +98,9 @@ function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; r
   const departed = new Date(r.departAt).getTime() <= openedAt;
   const full = r.seatsTaken >= r.seatsMax;
   const open = !r.cancelled && !departed;
+  // Ask "Did you ride together?" once a shared ride you were in has left.
+  const askOutcome = departed && r.isMember && !r.cancelled && r.seatsTaken >= 2 && !guest;
+  const outcome = useMyRideOutcome(r.id, askOutcome);
   const share = fareShareDollars(r.estTotalCostCents, r.seatsTaken);
   const eyebrow = [formatRideDate(r.departAt), [r.hostName, r.hostHome].filter(Boolean).join(', ')]
     .filter(Boolean)
@@ -140,7 +158,7 @@ function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; r
             )}
             <Timeline steps={rideTimeline(r)} />
 
-            <RidersPanel ride={r} />
+            {guest ? <GuestRiders ride={r} /> : <RidersPanel ride={r} />}
 
             {(r.meetSpot || share != null || r.notes) && (
               <GlassView className="gap-space-4 rounded-lg p-space-5">
@@ -158,6 +176,19 @@ function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; r
               </GlassView>
             )}
 
+            {askOutcome && outcome.isSuccess && !outcome.data && <RideOutcomePrompt ride={r} />}
+            {askOutcome && outcome.data && (
+              <Text className="type-body-sm px-space-1 text-ink-muted">
+                {outcome.data.rodeTogether
+                  ? `You rode together${
+                      outcome.data.totalFareCents != null
+                        ? ` · $${Math.round(outcome.data.totalFareCents / 100)} total`
+                        : ''
+                    }. Thanks for letting us know.`
+                  : 'You said this ride didn’t happen. Thanks for letting us know.'}
+              </Text>
+            )}
+
             {actionError && (
               <Text className="type-body-sm px-space-1 text-danger" accessibilityRole="alert">
                 {errorMessage(actionError)}
@@ -166,7 +197,7 @@ function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; r
 
             {open && !r.isMember && (
               <View className="gap-space-3">
-                {!full && (
+                {!full && !guest && (
                   <View className="gap-space-2">
                     <Text className="type-label px-space-1 text-ink-muted">Your tag for this ride</Text>
                     <SegmentedControl
@@ -184,10 +215,10 @@ function Loaded({ ride: r, back, renderChat }: { ride: Ride; back: () => void; r
                   icon={full ? 'lock' : 'plus'}
                   disabled={full}
                   loading={join.isPending}
-                  onPress={() => join.mutate(chosenTag)}
+                  onPress={() => requireSignIn(() => join.mutate(chosenTag))}
                   accessibilityHint={full ? 'This ride has no seats left' : undefined}
                 >
-                  {full ? 'Ride full' : 'Join ride'}
+                  {full ? 'Ride full' : guest ? 'Sign in to join' : 'Join ride'}
                 </Button>
               </View>
             )}

@@ -40,6 +40,11 @@
         flex: 1;
       }
     </style>
+
+    <!-- Vercel Web Analytics: page views and visitors, no cookies. Vercel serves this path once
+         Web Analytics is on in the project settings; elsewhere (local dev) it's a harmless 404.
+         A script tag rather than the npm package, so nothing reaches the phone app's bundle. -->
+    <script defer src="/_vercel/insights/script.js"></script>
   </head>
 
   <body>

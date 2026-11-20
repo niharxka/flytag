@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { forgetSignupSource, readSignupSource } from '@/features/analytics';
+
 import {
   completeOnboarding,
   getAvatarUrl,
@@ -47,9 +49,14 @@ export function useAvatarUrl(path: string | null | undefined) {
 export function useCompleteOnboarding(userId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: Onboarding) => completeOnboarding(userId, input),
+    // A storage hiccup must never block onboarding: no tag is the worst case.
+    mutationFn: async (input: Onboarding) =>
+      completeOnboarding(userId, input, await readSignupSource().catch(() => null)),
     // Refetching the profile brings in onboarded_at, which opens the (app) routes.
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.detail(userId) }),
+    onSuccess: () => {
+      forgetSignupSource().catch(() => {});
+      return queryClient.invalidateQueries({ queryKey: profileKeys.detail(userId) });
+    },
   });
 }
 

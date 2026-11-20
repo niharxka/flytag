@@ -27,7 +27,9 @@ export function ChatPreview({ rideId, isMember }: { rideId: string; isMember: bo
         Chat
       </Text>
       {!isMember ? (
-        <Text className="type-body-sm text-ink-muted">Join to chat with riders.</Text>
+        <Text className="type-body-sm text-ink-muted">
+          {session ? 'Join to chat with riders.' : 'Sign in and join to chat with riders.'}
+        </Text>
       ) : (
         <>
           {recent.length === 0 ? (

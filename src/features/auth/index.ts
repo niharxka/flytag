@@ -4,6 +4,7 @@
 export { AuthCallback } from './AuthCallback';
 export { AuthForm } from './AuthForm';
 export { AuthProvider, useSession } from './AuthProvider';
-export { useSignOut } from './auth.hooks';
+export { useIsGuest, useRequireSignIn, useSignOut } from './auth.hooks';
+export { useGuestBrowsing } from './auth.store';
 export { VerifyCodeForm } from './VerifyCodeForm';
 export { WelcomeScreen } from './WelcomeScreen';

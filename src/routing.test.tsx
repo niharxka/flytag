@@ -8,6 +8,7 @@ import { renderRouter, screen } from 'expo-router/testing-library';
 
 const mockAuth = { session: null as null | { user: { id: string; email: string } } };
 const mockProfile = { onboardedAt: null as string | null };
+const mockGuest = { browsing: false };
 
 // Screens become plain labels; the gate is what's under test.
 const mockScreen = (label: string) =>
@@ -20,6 +21,10 @@ jest.mock('@/features/auth', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => children,
   useSession: () => ({ session: mockAuth.session, initializing: false }),
   useSignOut: () => ({ mutate: jest.fn(), isPending: false }),
+  useIsGuest: () => !mockAuth.session,
+  useRequireSignIn: () => (action: () => void) => action(),
+  useGuestBrowsing: (select: (s: { browsing: boolean; hydrated: boolean }) => unknown) =>
+    select({ browsing: mockGuest.browsing, hydrated: true }),
   WelcomeScreen: mockScreen('Welcome screen'),
   AuthCallback: mockScreen('Callback screen'),
   AuthForm: ({ mode }: { mode: string }) => {
@@ -47,6 +52,11 @@ jest.mock('@/features/chat', () => ({
   ChatPreview: mockScreen('Chat preview'),
   ChatsScreen: mockScreen('Chats screen'),
 }));
+// The root layout records activity and link tags; routing doesn't care, so they do nothing here.
+jest.mock('@/features/analytics', () => ({
+  useCaptureSignupSource: () => {},
+  useRecordActivity: () => {},
+}));
 jest.mock('expo-font', () => ({ useFonts: () => [true, null] }));
 // Jest stubs global.css, so NativeWind never learns darkMode is 'class' and throws on a manual
 // scheme change. Theme switching isn't what these tests are about; skip applying it.
@@ -58,6 +68,10 @@ jest.mock('@/theme/useThemeMode', () => ({
 const signedIn = { user: { id: 'u1', email: 'a@ucsd.edu' } };
 
 describe('auth gate', () => {
+  beforeEach(() => {
+    mockGuest.browsing = false;
+  });
+
   it('signed out: opening the app shows Welcome', async () => {
     mockAuth.session = null;
     await renderRouter('./src/app', { initialUrl: '/' });
@@ -93,5 +107,29 @@ describe('auth gate', () => {
     mockProfile.onboardedAt = '2026-10-29T00:00:00Z';
     await renderRouter('./src/app', { initialUrl: '/sign-in' });
     expect(screen).toHavePathname('/');
+  });
+
+  it('guest: after "Look around first", opening the app shows the Rides tab', async () => {
+    mockAuth.session = null;
+    mockGuest.browsing = true;
+    await renderRouter('./src/app', { initialUrl: '/' });
+    expect(screen).toHavePathname('/');
+    expect(screen.getByText('Rides screen')).toBeTruthy();
+  });
+
+  it('guest: can open a ride page', async () => {
+    mockAuth.session = null;
+    mockGuest.browsing = true;
+    await renderRouter('./src/app', { initialUrl: '/rides/r1' });
+    expect(screen.getByText('Ride screen')).toBeTruthy();
+  });
+
+  it('guest: screens that need an account send them to Welcome', async () => {
+    mockAuth.session = null;
+    mockGuest.browsing = true;
+    await renderRouter('./src/app', { initialUrl: '/rides/new' });
+    expect(screen).toHavePathname('/welcome');
+    await renderRouter('./src/app', { initialUrl: '/rides/r1/chat' });
+    expect(screen).toHavePathname('/welcome');
   });
 });
