@@ -39,7 +39,9 @@ export function RideCard({
   const sky = Boolean(selected || highlight);
   const full = seatsTaken >= seatsMax;
   const ink = sky ? 'text-on-sky' : 'text-ink';
-  const seats = `${seatsTaken} of ${seatsMax} seats`;
+  // Count what's left, not what's taken: "1 of 4" read as "only one seat open".
+  const seatsOpen = Math.max(seatsMax - seatsTaken, 0);
+  const seats = `${seatsOpen} of ${seatsMax} seats open`;
 
   const body = (
     <View className="flex-row items-center gap-space-4 py-space-4 pl-space-5 pr-space-4">
@@ -72,7 +74,7 @@ export function RideCard({
     <PressableScale
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${date}, ${time}, ${full ? 'full' : `${seatsTaken} of ${seatsMax} seats taken`}`}
+      accessibilityLabel={`${date}, ${time}, ${full ? 'full' : seats}`}
       accessibilityState={{ selected: Boolean(selected) }}
     >
       {sky ? (

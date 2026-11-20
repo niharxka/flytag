@@ -50,7 +50,7 @@ Spec lives in `docs/spec/` split by topic. Start at `docs/spec/README.md` and re
 - Tokens only: no hex literals or magic numbers that exist as tokens. Don't edit generated files.
 - Palette is cool (mist, sky, atmos, charcoal). `flare` red is for the Plane component only. No pink or warm accents.
 - Pill is the default shape. Primary button at most once per screen. Touch targets ≥ 48.
-- Copy: sentence case, verb-first buttons ("Join ride"), dates `Tue 3/18 · 11:00 AM`, seats `2 of 4 seats`. No emoji in UI.
+- Copy: sentence case, verb-first buttons ("Join ride"), dates `Tue 3/18 · 11:00 AM`, seats `3 of 4 seats open` (seats left, not taken; `Full` at 0). No emoji in UI.
 - Every interactive element gets `accessibilityLabel`/`accessibilityRole`; respect reduced motion.
 - New `ui/` components go in the `/dev/ui` gallery with all variants, in Mist and Charcoal.
 

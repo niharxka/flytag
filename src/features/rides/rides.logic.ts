@@ -2,9 +2,13 @@ import { formatDayHeader, rideDayKey } from '@/lib/dates';
 
 import type { Ride } from './rides.api';
 
-/** "2 of 4 seats" (brand format). */
+/**
+ * "3 of 4 seats open" (brand format): seats left, not seats taken, which read as "only 1 open".
+ * "Full" when none are left.
+ */
 export function formatSeats(taken: number, max: number): string {
-  return `${taken} of ${max} seats`;
+  const open = Math.max(max - taken, 0);
+  return open === 0 ? 'Full' : `${open} of ${max} seats open`;
 }
 
 export type RideDay = { key: string; title: string; data: Ride[] };

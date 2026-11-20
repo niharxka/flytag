@@ -21,7 +21,7 @@
 - Pill is the default shape; `radius-lg` cards, `radius-xl` sheets.
 - One typeface: Open Sauce One, 300–900. `body` is 16 px minimum; `caption` 12 px only for bylines/tags; `fine` (300) never in the app.
 - Sentence case everywhere except uppercase `label` eyebrows. Buttons verb-first, 2–3 words ("Join ride", "Post a ride", "Let's go").
-- Formats: dates `Tue 3/18`, times `11:00 AM`, together `Tue 3/18 · 11:00 AM`, seats `2 of 4 seats`.
+- Formats: dates `Tue 3/18`, times `11:00 AM`, together `Tue 3/18 · 11:00 AM`, seats `3 of 4 seats open` (seats left, not taken; `Full` when none left).
 - No emoji in product UI. Icons come from the FlyTag set via `Icon`; standalone icons live in `IconButton` with a label.
 - Motion: press scales to 0.98, 150–200 ms ease; reduced motion removes movement.
 

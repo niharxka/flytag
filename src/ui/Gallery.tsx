@@ -343,7 +343,7 @@ export function Gallery() {
               tone="sky"
               icon="plane-depart"
               title="Your next ride"
-              body="Tue 3/18 · 11:00 AM · 2 of 4 seats"
+              body="Tue 3/18 · 11:00 AM · 2 of 4 seats open"
             />
             <ContentCard
               tone="charcoal"

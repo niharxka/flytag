@@ -21,7 +21,8 @@ const ride = (id: string, departAt: string): Ride => ({
 
 describe('rides logic', () => {
   it('formats seats like the brand', () => {
-    expect(formatSeats(2, 4)).toBe('2 of 4 seats');
+    expect(formatSeats(1, 4)).toBe('3 of 4 seats open');
+    expect(formatSeats(4, 4)).toBe('Full');
   });
 
   it('groups by San Diego day, keeping order', () => {
