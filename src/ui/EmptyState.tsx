@@ -16,7 +16,9 @@ export function EmptyState({ icon, title, body, action }: Props) {
         {title}
       </Text>
       {body && <Text className="type-body-sm text-center text-ink-muted">{body}</Text>}
-      {action}
+      {/* Button aligns itself to flex-start, which beats our items-center. This wrapper shrinks
+          to the button's width and is the thing that gets centred. */}
+      {action && <View>{action}</View>}
     </View>
   );
 }
