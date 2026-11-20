@@ -376,7 +376,7 @@ isOneToOne: false
           }
           CompositeTypes: {
             "guest_ride": {
-                        "id": string | null,"direction": Database["public"]['Enums']["ride_direction"] | null,"depart_at": string | null,"seats_max": number | null,"seats_taken": number | null,"status": Database["public"]['Enums']["ride_status"] | null
+                        "id": string | null,"direction": Database["public"]['Enums']["ride_direction"] | null,"depart_at": string | null,"seats_max": number | null,"seats_taken": number | null,"status": Database["public"]['Enums']["ride_status"] | null,"meet_spot": string | null
                       }
           }
         }

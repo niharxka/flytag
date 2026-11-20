@@ -86,8 +86,8 @@ function toRide(r: RideCardRow): Ride {
   };
 }
 
-// Guests get times and seats only (list_rides_guest), so everything about people is empty and
-// every free-text field is null. Screens already hide a section whose value is null.
+// Guests get times, seats and the meet spot (list_rides_guest), so everything about people is
+// empty and notes and fare are null. Screens already hide a section whose value is null.
 function toGuestRide(r: GuestRideRow): Ride {
   return {
     id: r.id!,
@@ -101,7 +101,7 @@ function toGuestRide(r: GuestRideRow): Ride {
     hostHome: null,
     isMember: false,
     isHost: false,
-    meetSpot: null,
+    meetSpot: r.meet_spot,
     estTotalCostCents: null,
     notes: null,
     cancelled: r.status === 'cancelled',

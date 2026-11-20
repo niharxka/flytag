@@ -52,7 +52,7 @@ Each feature lists behaviour, states, and acceptance criteria (AC). "Empty / loa
 - After departure, for members of a shared ride (≥ 2 riders): "Did you ride together?" → "Yes, we did" asks for the optional total fare, "No" saves at once (`record_ride_outcome`, §14). Once answered, one muted line repeats the answer. The Rides tab shows the same prompt as a card for the latest unanswered ride that left 1 h–14 days ago; "Not now" hides it until the app is next opened.
 - Actions: not member → sky "Join ride" (disabled "Ride full" when full). Member → "Leave ride" (ghost, confirm sheet). Host → overflow menu: Edit ride, Cancel ride.
 - Chat panel: visible to members only; non-members see "Join to chat with riders". Newest at bottom, grouped bubbles, system messages centered in `ink-muted`.
-- Guest (`get_ride_guest`): eyebrow is the date only; the riders panel becomes `Riders · 2 of 4 seats` + "Sign in to see who's going."; meet spot, fare and notes are hidden; no tag picker; the button reads "Sign in to join" and opens Welcome. Chat panel: "Sign in and join to chat with riders."
+- Guest (`get_ride_guest`): eyebrow is the date only; the riders panel becomes `Riders · 2 of 4 seats` + "Sign in to see who's going."; the meet spot shows, fare and notes are hidden; no tag picker; the button reads "Sign in to join" and opens Welcome. Chat panel: "Sign in and join to chat with riders."
 - **AC:** two people tapping Join on the last seat → exactly one succeeds, the other sees "This ride just filled up."; new messages appear without refresh; call button opens the dialer via `Linking.openURL('tel:…')` only after `get_rider_contact` succeeds.
 
 ### 9.7 Chats tab

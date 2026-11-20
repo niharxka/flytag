@@ -30,6 +30,7 @@
 | `20261120000002_activity_days.sql` | `activity_days` (one row per rider per San Diego day the app was opened), `record_activity()`; closed to the API |
 | `20261120000003_ride_outcomes.sql` | `ride_outcomes` ("Did you ride together?" + optional total fare, one per rider per ride), `record_ride_outcome()`, `pending_ride_outcome()` |
 | `20261120000004_analytics_views.sql` | `analytics` schema (not exposed to the API): `signups_by_source`, `ride_results`, `rides_weekly`, `monthly_active`, `retention_monthly` |
+| `20261120000005_guest_meet_spot.sql` | `guest_ride.meet_spot`: signed-out visitors see where to meet (still no names, notes or fare) |
 
 ## 1. The diagram
 

@@ -1,7 +1,7 @@
--- list_rides_guest + get_ride_guest: signed-out visitors see times and seats, never people.
+-- list_rides_guest + get_ride_guest: signed-out visitors see times, seats and meet spots, never people.
 begin;
 set local search_path = public, extensions;
-select plan(8);
+select plan(10);
 
 delete from public.rides;
 
@@ -20,6 +20,8 @@ insert into public.ride_members (ride_id, user_id, role)
 insert into public.ride_members (ride_id, user_id, role, left_at) values
   ('d0000000-0000-4000-8000-000000000001', 'bbbbbbbb-0000-4000-8000-000000000002', 'rider', null),
   ('d0000000-0000-4000-8000-000000000002', 'bbbbbbbb-0000-4000-8000-000000000002', 'rider', now());
+update public.rides set meet_spot = 'Sixth market', notes = 'Text me first', est_total_cost_cents = 4000
+  where id = 'd0000000-0000-4000-8000-000000000001';
 
 set local role anon;
 
@@ -33,17 +35,22 @@ select is((select seats_taken from public.list_rides_guest('to_airport') where i
   'riders who left free their seat');
 select is((select status::text from public.get_ride_guest('d0000000-0000-4000-8000-000000000004')), 'cancelled',
   'a guest can open a cancelled ride by link and see it was cancelled');
+select is((select meet_spot from public.get_ride_guest('d0000000-0000-4000-8000-000000000001')), 'Sixth market',
+  'allowed: a guest sees where to meet');
+select is((select meet_spot from public.list_rides_guest('to_airport') where id = 'd0000000-0000-4000-8000-000000000001'), 'Sixth market',
+  'the list carries the meet spot too');
 select throws_ok($$select * from public.ride_cards$$, '42501', null, 'denied: a guest cannot read ride_cards (names)');
 -- profiles has no anon policy, so RLS hides every row rather than raising.
 select is((select count(*) from public.profiles), 0::bigint, 'denied: a guest cannot read profiles');
 reset role;
 
--- The shape itself is the privacy guarantee: no column that could name someone.
+-- The shape itself is the privacy guarantee: no column that could name someone, and no notes
+-- or fare (free text and money stay for signed-in riders).
 select is(
   (select array_agg(attname::text order by attnum) from pg_attribute
     where attrelid = 'public.guest_ride'::regclass and attnum > 0 and not attisdropped),
-  array['id', 'direction', 'depart_at', 'seats_max', 'seats_taken', 'status'],
-  'guest_ride carries times and seats only');
+  array['id', 'direction', 'depart_at', 'seats_max', 'seats_taken', 'status', 'meet_spot'],
+  'guest_ride carries times, seats and meet spot only');
 
 select set_config('request.jwt.claims', '{"sub":"bbbbbbbb-0000-4000-8000-000000000002","role":"authenticated"}', true);
 set local role authenticated;
